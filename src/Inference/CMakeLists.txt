@@ -8,13 +8,16 @@ set(curdir ${PROJECT_SOURCE_DIR})
 # 查找 OpenCV
 find_package(OpenCV REQUIRED)
 
+
 # 查找 OpenVINO
 find_package(OpenVINO REQUIRED)
 
+find_package(fmt REQUIRED)
 
-# 查找 ONNX Runtime, mannul set path
-set(CMAKE_PREFIX_PATH "/home/wxxz/workspace/ONNXRuntime/onnxruntime-linux-x64-1.19.0")
-find_package(onnxruntime REQUIRED)
+
+# ONNX Runtime, mannul set path,
+include_directories("/usr/include/onnxruntime")
+
 
 
 file(GLOB_RECURSE CPP_FILES "src/*.cpp")
@@ -31,7 +34,6 @@ endforeach(filepath ${SOURCE_FILE})
 # # endforeach(filepath ${SOURCE_FILE})
 
 
-
 add_library(
     ${targetname} STATIC 
     ${sources_files}
@@ -39,20 +41,16 @@ add_library(
 
 
 target_include_directories(
-    ${targetname} PUBLIC 
-    ${curdir}/include
-)
-
-target_include_directories(
-    ${targetname} PRIVATE
-    ${curdir}/src
-)
-
-
-target_include_directories(
     ${targetname} PRIVATE 
     ${OpenCV_INCLUDE_DIRS}
     ${OpenVINO_INCLUDE_DIRS}
+    
+)
+
+target_include_directories(
+    ${targetname} PUBLIC 
+    ${curdir}/include
+    ${curdir}/src
 )
 
 
@@ -62,6 +60,7 @@ target_link_libraries(
     openvino::runtime
     onnxruntime
     libcommon
+    fmt::fmt
 )
 
 

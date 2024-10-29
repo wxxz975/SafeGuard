@@ -4,17 +4,25 @@
 #include <memory>
 #include "Base/Tensor.h"
 #include "Base/ModelMetadata.h"
-
+#include "FrameworkImpl.h"
 
 namespace Inference
 {
-    class Framework
+
+    enum class FrameworkType: uint32_t 
     {
-    public:
-        class FrameworkImpl;
+        OpenVINO = 0,
+        ONNXRuntime,
+        FRAMEWORK_MAX
+    };
+
+    class FrameworkImpl;
+    class Framework
+    {  
+    private:
         std::unique_ptr<FrameworkImpl> m_impl;
     public:
-        Framework() = default;
+        Framework(std::unique_ptr<FrameworkImpl> impl);
         ~Framework() = default;
 
         /// @brief 

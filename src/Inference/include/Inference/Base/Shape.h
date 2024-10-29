@@ -7,6 +7,13 @@ namespace Inference
 {
     namespace Base
     {
+        // struct ImageSize {
+        //     size_t width;
+        //     size_t height;
+        //     ImageSize(size_t width = 0, size_t height = 0)
+        //         : width(width), height(height) 
+        //         { }
+        // };
         struct ImageSize {
             int width;
             int height;
@@ -30,7 +37,7 @@ namespace Inference
             std::string to_string() const;
         };
 
-        std::ostream& operator<<(std::ostream& os, const Shape& shape) {
+        inline std::ostream& operator<<(std::ostream& os, const Shape& shape) {
             os << shape.to_string();
             return os;
         }

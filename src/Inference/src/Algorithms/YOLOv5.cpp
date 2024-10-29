@@ -1,10 +1,19 @@
 #include "Inference/Algorithms/YOLOv5.h"
 #include "Common/Utils.h"
+#include "Common/Logger.h"
 
 namespace Inference
 {
     namespace Algorithms
     { 
+        const std::vector<std::uint64_t> YOLOv5::m_theoryOutShape_old = {1 ,25200, 85};
+        const std::vector<std::uint64_t> YOLOv5::m_theoryOutShape_new = {1, 18, 8400};
+        const std::vector<std::uint64_t> YOLOv5::m_theoryInShape = {1, 3, 640, 640};
+
+        const std::string YOLOv5::m_OutShapeMask_old = "xx?";
+        const std::string YOLOv5::m_OutShapeMask_new = "x?x";
+        const std::string YOLOv5::m_InShapeMask = "xx??";
+
         std::vector<Base::BoundingBox> YOLOv5::ParseRawOutput(const std::vector<Base::TensorPtr> &outputs, std::shared_ptr<InferenceContext> ic)
         {
             std::vector<Base::BoundingBox> result;
@@ -25,12 +34,12 @@ namespace Inference
                 num_channels = shape.at(1);
                 num_anchors = shape.at(2);
                 outShape = cv::Size(num_anchors, num_channels);
-                // Common::zlog("use new shape\n");
+                Common::logInfo("use new shape\n");
             }else {
                 num_channels = shape.at(2);
                 num_anchors = shape.at(1);
                 outShape = cv::Size(num_channels, num_anchors);
-                // Common::zlog("use old shape\n");
+                Common::logInfo("use old shape\n");
             }
             
             output0 = cv::Mat(outShape, CV_32F, raw_ptr);
@@ -85,8 +94,8 @@ namespace Inference
                 auto shape = VecToStr(model_output_shape);
                 auto shapeNew = VecToStr(m_theoryOutShape_new);
                 auto shapeOld = VecToStr(m_theoryOutShape_old);
-                //Common::zlog("OutputShape:%s, imcompatiable with ShapeNew:%s or ShapeOld:%s\n", 
-                    //shape.c_str(), shapeNew.c_str(), shapeOld.c_str());
+                Common::logError("OutputShape:%s, imcompatiable with ShapeNew:%s or ShapeOld:%s\n", 
+                    shape.c_str(), shapeNew.c_str(), shapeOld.c_str());
             }
 
 

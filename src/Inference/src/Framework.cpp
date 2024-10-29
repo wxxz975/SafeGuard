@@ -4,6 +4,12 @@
 
 namespace Inference
 {
+    Framework::Framework(std::unique_ptr<FrameworkImpl> impl)
+        :m_impl(std::move(impl))
+    {
+
+    }
+
     bool Framework::Initialize(const std::string &model_path)
     {
         return m_impl->Initialize(model_path);

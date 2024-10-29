@@ -5,7 +5,7 @@ namespace Inference
 {
     namespace Algorithms
     {
-        struct rtdetrRawOutput
+        struct RTDetrRawOutput
         {
             float cx;
             float cy;
@@ -13,16 +13,16 @@ namespace Inference
             float h;
             /// .... class socre
         };
-        typedef rtdetrRawOutput* pRtdetrRawOutput;
+        typedef RTDetrRawOutput* pRTDetrRawOutput;
         
-        #define RTDETR_OUTBOX_ELEMENT_COUNT (sizeof(rtdetrRawOutput) / sizeof(float))
+        #define RTDetr_OUTBOX_ELEMENT_COUNT (sizeof(RTDetrRawOutput) / sizeof(float))
 
 
-        class ARtdetr: public SampleAlgo
+        class RTDetr: public SampleAlgo
         {
         public:
-            ARtdetr();
-            ~ARtdetr() = default;
+            RTDetr();
+            ~RTDetr() = default;
 
             virtual std::vector<Base::TensorPtr> Preprocessing(const cv::Mat& image, std::shared_ptr<InferenceContext> ic) override;
 

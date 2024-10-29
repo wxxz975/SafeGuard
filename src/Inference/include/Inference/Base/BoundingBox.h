@@ -1,5 +1,7 @@
 #pragma once
 #include <cstdint>
+#include <vector>
+#include <ostream>
 
 namespace Inference
 {
@@ -27,7 +29,16 @@ namespace Inference
             };
         };
 
-        
+        typedef std::vector<Base::BoundingBox> OutputBoxes;
+        typedef std::function<void(const Base::OutputBoxes&)> AsynInferCallback;
+
+        inline std::ostream& operator<<(std::ostream& os, const BoundingBox& box) {
+            os << "label index:" << box.class_index << " confidence:" << box.confidence
+                << " left:" << box.left << " top:" << box.top
+                << " width:" << box.width << "height:" << box.height << "\n";
+            return os;
+        }
+
     } // namespace Base
     
     

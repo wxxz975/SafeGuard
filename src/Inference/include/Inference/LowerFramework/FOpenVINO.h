@@ -9,7 +9,7 @@ namespace Inference
 {
     namespace LowerFramework
     {
-        class FOpenVINO: public Framework::FrameworkImpl
+        class FOpenVINO: public FrameworkImpl
         {
         public:
             FOpenVINO();

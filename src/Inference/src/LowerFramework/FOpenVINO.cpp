@@ -85,10 +85,8 @@ namespace Inference
             if(rtInfo.count("framework")) {
                 auto framework = rtInfo["framework"].as<ov::AnyMap>();
                 if(framework.count("names")) {
-                    auto names = framework["names"].as<ov::AnyMap>();
-                    for(auto iter : names) {
-                        labels.emplace_back(iter.second.as<std::string>());
-                    }
+                    auto names =  framework["names"].as<std::string>();
+                    labels = Common::ParseJsonRaw(names);
                 }
             }
             m_metadata->labels = std::move(labels);
@@ -117,6 +115,8 @@ namespace Inference
             for(const auto& tensor : tensors) {
                 result.emplace_back(CreateTensor(tensor));
             }
+
+            return result;
         }
         Base::Type_t FOpenVINO::ConvertType(ov::element::Type_t type)
         {
@@ -143,7 +143,7 @@ namespace Inference
             for(int idx = 0; idx < m_metadata->outputs.size(); ++idx) {
                 auto output_tensor = m_ov_infer_request.get_output_tensor(idx);
                 auto ele_type = ConvertType(output_tensor.get_element_type());
-                auto ele_shape = Common::VecToVec<size_t, ov::Shape>(output_tensor.get_shape());
+                auto ele_shape = ConvertShape(output_tensor.get_shape());
                 auto byte_count = output_tensor.get_byte_size();
 
                 auto begin = reinterpret_cast<std::uint8_t*>(output_tensor.data());

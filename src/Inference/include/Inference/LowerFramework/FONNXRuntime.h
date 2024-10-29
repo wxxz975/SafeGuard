@@ -8,7 +8,7 @@ namespace Inference
 {
     namespace LowerFramework
     {
-        class FONNXRuntime: public Framework::FrameworkImpl
+        class FONNXRuntime: public FrameworkImpl
         {
         public:
             FONNXRuntime();
@@ -30,6 +30,8 @@ namespace Inference
             Base::Type_t ConvertType(ONNXTensorElementDataType type);
 
             ONNXTensorElementDataType ConvertType(Base::Type_t type);
+
+            Base::Shape ConvertShape(const std::vector<std::int64_t>& shape);
 
             static void MapType();
 

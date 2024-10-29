@@ -18,17 +18,23 @@ namespace Inference
         };
 
         ElementType::ElementType(const ElementType& type)
+            :m_type(type.Type())
         {
 
         }
 
-        inline ElementType::ElementType(const std::string& type)
-            :ElementType(TypeFromString(type))
+        ElementType::ElementType(Type_t type)
+            :m_type(type)
+        {
+        }
+        
+        ElementType::ElementType(const std::string &type)
+            : ElementType(TypeFromString(type))
         {
 
         }
 
-        inline std::size_t ElementType::Size() const
+        std::size_t ElementType::Size() const
         {
             if (m_type == Type_t::undefined) {
                 return 0;
@@ -45,14 +51,16 @@ namespace Inference
             case Type_t::u64: return sizeof(uint64_t);
             default: assert(0 && "Not a base type!");
             }
+            return 0;
         }
 
-        inline std::string ElementType::GetName() const
+        std::string ElementType::GetName() const
         {
             if (auto strname = m_type2str[m_type]) {
                 return *strname;
             }
             assert(0 && "Not a base type!");
+            return std::string("undefined");
         }
 
         Type_t ElementType::Type() const
@@ -66,6 +74,7 @@ namespace Inference
                 return *type;
             }
             assert(0 && "Not a base type!");
+            return ElementType(Type_t::undefined);
         }
 
         

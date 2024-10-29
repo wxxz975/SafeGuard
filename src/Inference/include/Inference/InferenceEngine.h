@@ -3,34 +3,42 @@
 #include <vector>
 #include <string>
 #include <functional>
-#include "Base/ModelMetadata.h"
-#include "PrePostProcessor.h"
+
+#include <opencv2/opencv.hpp>
+
+#include "Inference/Base/BoundingBox.h"
+#include "InferenceEngineImpl.h"
+
 
 namespace Inference
 {
+    class InferenceEngineImpl;
+
     class InferenceEngine
     {
     public:
-        class InferenceEngineImpl;
-        std::unique_ptr<InferenceEngineImpl> m_impl;
-
-        typedef std::vector<Base::BoundingBox> OutputBoxes;
-        typedef std::function<void(const OutputBoxes&)> AsynInferCallback;
-        
-    public:
+       
         InferenceEngine() = default;
         ~InferenceEngine() = default;
 
-        // TODO FIXME
-        //bool Initialize();
+     
+        bool Initialize(const std::string& model_path, const std::string& algo_type, const std::string& infer_framework, size_t threadNum = 4);
 
-        OutputBoxes Infer(const std::string& img_path);
+        Base::OutputBoxes Infer(const std::string& img_path);
 
-        OutputBoxes Infer(const cv::Mat& img);
+        Base::OutputBoxes Infer(const cv::Mat& img);
 
-        void InferAsyn(const std::string& img_path, const AsynInferCallback& callback);
+        void InferAsyn(const std::string& img_path, const Base::AsynInferCallback& callback);
 
-        void InferAsyn(const cv::Mat& img, const AsynInferCallback& callback);
+        void InferAsyn(const cv::Mat& img, const Base::AsynInferCallback& callback);
+
+        cv::Mat RenderBoxes(const std::string& img_path, const Base::OutputBoxes& boxes);
+
+        const std::vector<std::string>& GetLabels() const;
+
+        
+    private:
+        std::unique_ptr<InferenceEngineImpl> m_impl;
     };
     
     

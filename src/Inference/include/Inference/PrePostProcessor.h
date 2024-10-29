@@ -9,13 +9,23 @@
 #include "Inference/Base/ModelMetadata.h"
 #include "Inference/InferenceContext.h"
 
+#include "PrePostProcessorImpl.h"
+
 
 namespace Inference
 {
+    enum class AlgorithmsType: uint32_t
+    {
+        YOLOv3 = 0,
+        YOLOv5,
+        YOLOv8,
+        RTDetr,
+        ALGO_MAX
+    };
+    
+
     class PrePostProcessor final
     {
-    public:
-        class PrePostProcessorImpl;
     private:
         std::unique_ptr<PrePostProcessorImpl> m_impl;
         

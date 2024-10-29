@@ -157,12 +157,19 @@ namespace Inference
         {
             return m_type2ortType[type];
         }
+        
+        Base::Shape FONNXRuntime::ConvertShape(const std::vector<std::int64_t> &shape)
+        {
+            return Base::Shape(shape.begin(), shape.end());
+        }
+        
         void FONNXRuntime::MapType()
         {
             for(auto type : m_type2ortType) {
                 m_ortType2type.emplace(type.second, type.first);
             }
         }
+        
         std::vector<const char *> FONNXRuntime::GetInputNames()
         {
             std::vector<const char*> result;
@@ -188,7 +195,7 @@ namespace Inference
                 auto begin = value.GetTensorData<std::uint8_t>();
                 auto typeAndShape = value.GetTensorTypeAndShapeInfo();
                 auto ele_type = ConvertType(typeAndShape.GetElementType());
-                auto ele_shape = Common::VecToVec<size_t, std::vector<std::int64_t>>(typeAndShape.GetShape());
+                auto ele_shape = ConvertShape(typeAndShape.GetShape());
                 auto ele_count = typeAndShape.GetElementCount();
                 auto ele_size = Base::ElementType(ele_type).Size(); 
 

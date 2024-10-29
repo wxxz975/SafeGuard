@@ -1,5 +1,4 @@
 #include "Inference/PrePostProcessor.h"
-#include "PrePostProcessorImpl.h"
 
 
 namespace Inference
@@ -17,7 +16,7 @@ namespace Inference
     }
     std::vector<Base::TensorPtr> PrePostProcessor::Preprocessing(const cv::Mat &image, std::shared_ptr<InferenceContext> ic)
     {
-        m_impl->Preprocessing(image, ic);
+        return m_impl->Preprocessing(image, ic);
     }
     std::vector<Base::BoundingBox> PrePostProcessor::Postprocessing(const std::vector<Base::TensorPtr> &output, std::shared_ptr<InferenceContext> ic)
     {

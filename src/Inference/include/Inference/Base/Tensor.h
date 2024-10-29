@@ -13,8 +13,8 @@ namespace Inference
         class Tensor: public std::enable_shared_from_this<Tensor>
         {
         public:
-            Tensor(const Shape& shape, ElementType type, void* ptr = nullptr);
-            Tensor(const Shape& shape, ElementType type, std::vector<uint8_t>&& data);
+            Tensor(const Shape& shape, ElementType eletype, void* ptr = nullptr);
+            Tensor(const Shape& shape, ElementType eletype, std::vector<uint8_t>&& data);
             ~Tensor();
 
             /// <summary>
@@ -30,12 +30,12 @@ namespace Inference
             size_t GetByteSize();
             
 
-            /// @brief create tensor`s interface
-            /// @param shape 
-            /// @param type 
-            /// @param ptr 
-            /// @return 
-            static Tensor CreateTensor(const Shape& shape, ElementType type, void* ptr);
+            // /// @brief create tensor`s interface
+            // /// @param shape 
+            // /// @param type 
+            // /// @param ptr 
+            // /// @return 
+            // static Tensor CreateTensor(const Shape& shape, ElementType type, void* ptr);
 
 
             /// <summary>
@@ -75,7 +75,7 @@ namespace Inference
             ElementType m_elemType;
         };
 
-        std::ostream& operator<<(std::ostream& os, const Tensor& tensor) {
+        inline std::ostream& operator<<(std::ostream& os, const Tensor& tensor) {
             const auto& shape = tensor.GetShape();
             const auto& eletype = tensor.GetElementType();
             os << shape << "\t" << eletype << "\n";

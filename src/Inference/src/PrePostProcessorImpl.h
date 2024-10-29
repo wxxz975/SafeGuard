@@ -1,10 +1,16 @@
 #pragma once
-#include "Inference/PrePostProcessor.h"
+#include <vector>
+#include <memory>
+#include <opencv2/opencv.hpp>
+#include "Inference/Base/Tensor.h"
+#include "Inference/Base/ModelMetadata.h"
+#include "Inference/Base/BoundingBox.h"
 
+#include "Inference/InferenceContext.h"
 
 namespace Inference
 {
-    class PrePostProcessor::PrePostProcessorImpl
+    class PrePostProcessorImpl
     {
     public:
         PrePostProcessorImpl() = default;

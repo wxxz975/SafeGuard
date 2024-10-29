@@ -12,7 +12,7 @@ namespace Inference
         enum class Type_t
         {
             undefined = -1,
-            i8,
+            i8 = 0,
             u8,
             f32,
             i32,
@@ -26,7 +26,7 @@ namespace Inference
         public:
             ElementType() = default;
             ElementType(const ElementType& type);
-            constexpr ElementType(const Type_t t) : m_type{ t } {};
+            ElementType(Type_t type);
             explicit ElementType(const std::string& type);
 
             /// <summary>
@@ -51,7 +51,7 @@ namespace Inference
             const static Common::BiMap<Type_t, std::string> m_type2str;
         };
 
-        std::ostream& operator<<(std::ostream& os, const ElementType& type) {
+        inline std::ostream& operator<<(std::ostream& os, const ElementType& type) {
             os << "element name:" << type.GetName() << "element size:" << type.Size();
             return os;
         }

@@ -27,14 +27,14 @@ namespace Inference
             cv::Size original_size = image.size();
             ic->original_size = {original_size.width, original_size.height};
             
-            ic->target_size = {inputShape.at(3), inputShape.at(2)}; // [1, 3, 640, 640] [NCHW]
+            ic->target_size = {static_cast<int>(inputShape.at(3)), static_cast<int>(inputShape.at(2))}; // [1, 3, 640, 640] [NCHW]
             cv::Size target_size = ConvertToCVSize(ic->target_size);
                         
             auto newimg = Letterbox(image, target_size);
             newimg = BlobFromImage(newimg, 1 / 255.0, target_size,  cv::Scalar(0,0,0), true);
 
             ic->input_tensor = std::make_shared<Base::Tensor>(
-                Base::Shape({inputShape.at(1), inputShape.at(2), inputShape.at(3)}),
+                Base::Shape(inputShape.begin(), inputShape.end()),
                 Base::ElementType(Base::Type_t::f32),
                 reinterpret_cast<void*>(newimg.data)
             );

@@ -44,5 +44,5 @@ namespace Inference
             const std::vector<std::string>& labels = std::vector<std::string>());
 
 
-        inline cv::Size ConvertToCVSize(const Base::ImageSize& size);
+        cv::Size ConvertToCVSize(const Base::ImageSize& size);
 } // namespace Inference

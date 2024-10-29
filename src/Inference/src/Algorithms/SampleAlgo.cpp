@@ -1,6 +1,7 @@
 #include "Inference/Algorithms/SampleAlgo.h"
 #include "Inference/Base/ModelMetadata.h"
 
+#include "Common/Logger.h"
 #include "Common/Utils.h"
 #include "ImageOps.h"
 
@@ -13,7 +14,7 @@ namespace Inference
             m_metadata = metadata;
             
             if(!CheckIOShape()) {
-                // Common::zlog("Error on Input and output shapes do not match\n");
+                Common::logError("Error on Input and output shapes do not match\n");
                 return false;
             }
 

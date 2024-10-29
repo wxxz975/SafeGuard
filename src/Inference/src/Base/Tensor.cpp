@@ -31,19 +31,20 @@ namespace Inference
         // }
 
 
-        Tensor::Tensor(const Shape& shape, ElementType type, void* ptr) 
+        Tensor::Tensor(const Shape& shape, ElementType eletype, void* ptr) 
         {
             SetShape(shape);
-            SetElementType(type);
+            SetElementType(eletype);
             
             size_t byte_size = GetByteSize();
-            m_data.assign(ptr, ptr + byte_size);
+            auto u8ptr = reinterpret_cast<uint8_t*>(ptr);
+            m_data.assign(u8ptr, u8ptr + byte_size);
         }
-        Tensor::Tensor(const Shape &shape, ElementType type, std::vector<uint8_t> &&data) 
+        Tensor::Tensor(const Shape &shape, ElementType eletype, std::vector<uint8_t> &&data) 
             :m_data(std::move(data))
         {
             SetShape(shape);
-            SetElementType(type);
+            SetElementType(eletype);
         };
 
         Tensor::~Tensor()
@@ -73,10 +74,10 @@ namespace Inference
             return size;
         }
 
-        Tensor Tensor::CreateTensor(const Shape &shape, ElementType type, void *ptr)
-        {
-            //return Tensor();
-        }
+        // Tensor Tensor::CreateTensor(const Shape &shape, ElementType type, void *ptr)
+        // {
+        //     //return Tensor();
+        // }
         
         const Shape& Tensor::GetShape() const
         {

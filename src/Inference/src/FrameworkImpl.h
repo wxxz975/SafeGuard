@@ -3,7 +3,7 @@
 
 namespace Inference
 {
-    class Framework::FrameworkImpl
+    class FrameworkImpl
     {
     public:
         FrameworkImpl() = default;

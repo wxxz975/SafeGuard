@@ -5,7 +5,7 @@ namespace Inference
 {
     namespace Algorithms
     {
-        class SampleAlgo: public PrePostProcessor::PrePostProcessorImpl
+        class SampleAlgo: public PrePostProcessorImpl
         {
         public:
             SampleAlgo() = default;
