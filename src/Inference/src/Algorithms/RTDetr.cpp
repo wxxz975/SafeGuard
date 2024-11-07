@@ -1,4 +1,4 @@
-#include "Inference/Algorithms/RTDetr.h"
+#include "Algorithms/RTDetr.h"
 
 #include "ImageOps.h"
 

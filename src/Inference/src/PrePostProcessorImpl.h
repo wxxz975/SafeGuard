@@ -6,7 +6,7 @@
 #include "Inference/Base/ModelMetadata.h"
 #include "Inference/Base/BoundingBox.h"
 
-#include "Inference/InferenceContext.h"
+#include "InferenceContext.h"
 
 namespace Inference
 {
@@ -23,6 +23,8 @@ namespace Inference
         virtual std::vector<Base::BoundingBox> Postprocessing(const std::vector<Base::TensorPtr>& output, std::shared_ptr<InferenceContext> ic) = 0;
 
         virtual cv::Mat RenderBoxes(const std::vector<Base::BoundingBox>& boxes, const std::string& image_path) = 0;
+
+        virtual cv::Mat RenderBoxes(const std::vector<Base::BoundingBox>& boxes, const cv::Mat &image) = 0;
 
         virtual bool CheckIOShape() = 0;
 

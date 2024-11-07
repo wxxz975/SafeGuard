@@ -1,9 +1,10 @@
-#include "Inference/Algorithms/SampleAlgo.h"
+#include "Algorithms/SampleAlgo.h"
 #include "Inference/Base/ModelMetadata.h"
 
 #include "Common/Logger.h"
 #include "Common/Utils.h"
 #include "ImageOps.h"
+#include "SampleAlgo.h"
 
 namespace Inference
 {
@@ -27,6 +28,11 @@ namespace Inference
             return RenderBoundingBoxes(image_path, boxes, labels);
         }
 
+        cv::Mat SampleAlgo::RenderBoxes(const std::vector<Base::BoundingBox> &boxes, const cv::Mat &image)
+        {
+            const auto&labels =  m_metadata ? m_metadata->labels : std::vector<std::string>();
+            return RenderBoundingBoxes(image, boxes, labels);
+        }
         bool SampleAlgo::CheckIOShape()
         {
             using namespace Common;

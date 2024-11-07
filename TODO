@@ -1,3 +1,14 @@
 
 
-fix YOLOv5 old version and new version diff preposprocessing
+修复YOLOv5新老版本预处理不一致的问题
+
+添加TensorRT框架推理 | 并且学习cuda编程,实现预处理、后处理放入到这个gpu进行
+
+测试异步推理 | 测试所有推理效果，给出推理结果
+
+补全Network模块的MainPage的后端逻辑处理
+
+#修改这个CMakeList中的include权限只保留接口即可, 所有算法实现都隐藏
+
+
+

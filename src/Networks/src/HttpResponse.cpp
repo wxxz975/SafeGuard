@@ -1,75 +1,82 @@
-#include "HttpResponse.h"
+#include "Networks/HttpResponse.h"
 
-
-namespace Communications
+namespace Networks
 {
     
-    HttpResponse& HttpResponse::setStatusCode(HttpStatusCode code)
+    HttpResponse& HttpResponse::SetStatusCode(HttpStatusCode code)
     {
         m_statusCode = code;
         return *this;
     }
 
-    HttpResponse& HttpResponse::setStatusMessage(const std::string &msg)
+    HttpResponse& HttpResponse::SetStatusMessage(const std::string &msg)
     {
         m_statusMsg = msg;
         return *this;
     }
 
-    HttpResponse& HttpResponse::addHeader(const std::string& key, const std::string& value)
+    HttpResponse& HttpResponse::AddHeader(const std::string& key, const std::string& value)
     { 
         m_headers[key] = value; 
         return *this;
     }
 
-    HttpResponse& HttpResponse::setBody(const std::string& body)
+    HttpResponse& HttpResponse::SetBody(const std::string& body)
     { 
         m_body = body;
         return *this; 
     }
 
-    HttpResponse& HttpResponse::closeConnection(bool isClose)
+    HttpResponse& HttpResponse::CloseConnection(bool isClose)
     {
         m_closeConnection = isClose;
         return *this;
     }
 
-    HttpResponse& HttpResponse::setContentType(const std::string &type)
+    HttpResponse& HttpResponse::SetContentType(const std::string &type)
     {
-        addHeader("Content-Type", type);
+        AddHeader("Content-Type", type);
         return *this;
     }
 
-    void HttpResponse::setSimpleResponse(HttpStatusCode statusCode, const std::string &statusMsg, 
+    void HttpResponse::SetSimpleResponse(HttpStatusCode statusCode, const std::string &statusMsg, 
         const std::string &body, bool isClose, const std::string& contentType)
     {
-        setStatusCode(statusCode);
-        setStatusMessage(statusMsg);
-        closeConnection(isClose);
-        setContentType(contentType);
-        setBody(body);
+        SetStatusCode(statusCode);
+        SetStatusMessage(statusMsg);
+        CloseConnection(isClose);
+        SetContentType(contentType);
+        SetBody(body);
     }
 
-    void HttpResponse::setErrorResponse(const std::string& body)
+    void HttpResponse::SetErrorResponse(const std::string& body)
     {
-        setSimpleResponse(HttpResponse::k400_BadRequest, "ERROR", body, true);
+        SetSimpleResponse(HttpResponse::k400_BadRequest, "ERROR", body, true);
     }
 
-    void HttpResponse::setUnknownErrorResponse(const std::string &body)
+    void HttpResponse::SetUnknownErrorResponse(const std::string &body)
     {
-        setSimpleResponse(HttpResponse::kUnknown, "UNKNOWN", body, true);
+        SetSimpleResponse(HttpResponse::kUnknown, "UNKNOWN", body, true);
     }
 
-    void HttpResponse::setOkResponse(const std::string &body)
+    void HttpResponse::SetOkResponse(const std::string &body)
     {
-        setSimpleResponse(HttpResponse::k200_Ok, "Ok", body, false);
+        SetSimpleResponse(HttpResponse::k200_Ok, "Ok", body, false);
     }
 
-    void HttpResponse::setJsonResponse(const std::string &json)
+    void HttpResponse::SetJsonResponse(const std::string &json)
     {
-        setStatusCode(HttpResponse::k200_Ok);
-        addHeader("Access-Control-Allow-Origin", "*");
-        addHeader("Content-Type", "application/json");
-        setBody(json);
+        SetStatusCode(HttpResponse::k200_Ok);
+        AddHeader("Access-Control-Allow-Origin", "*");
+        AddHeader("Content-Type", "application/json");
+        SetBody(json);
     }
-} // namespace Communications
+
+    void HttpResponse::SetFileResponse(const std::string &filepath)
+    {
+        m_filepath = filepath;
+        m_sendfile = true;
+    }
+} // namespace Networks
+
+

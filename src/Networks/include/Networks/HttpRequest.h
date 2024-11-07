@@ -2,7 +2,7 @@
 #include <map>
 #include <string>
 
-namespace Communications
+namespace Networks
 {
     class HttpRequestParser;
 
@@ -20,13 +20,13 @@ namespace Communications
         ~HttpRequest() = default;
         
         
-        std::string getHeader(const std::string& key);
-        void addHeader(const std::string& key, const std::string& value);
-        Method getMethod() { return m_method; };
-        void setMethod(const std::string& method);
-        void setMethod(Method method) { m_method = method; };
-        std::string getPath() { return m_path; };
-        void setPath(const std::string& path) { m_path = path; };
+        std::string GetHeader(const std::string& key) const;
+        void AddHeader(const std::string& key, const std::string& value);
+        Method GetMethod() const { return m_method; } ;
+        void SetMethod(const std::string& method);
+        void SetMethod(Method method) { m_method = method; };
+        std::string GetPath() const { return m_path; };
+        void SetPath(const std::string& path) { m_path = path; };
 
 
     private:
@@ -36,4 +36,4 @@ namespace Communications
     };
 
 
-} // namespace Communications
+} // namespace Networks

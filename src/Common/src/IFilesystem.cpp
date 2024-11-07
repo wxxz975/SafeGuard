@@ -39,7 +39,7 @@ namespace IFilesystem
     {
         return fs::path(path).filename().string();
     }
-
+    
     std::string GetFileBaseName(const Path &path)
     {
         return fs::path(path).stem();
@@ -55,8 +55,17 @@ namespace IFilesystem
         return fs::path(path).parent_path().string();
     }
 
+    bool IsAbsolutePath(const Path &path)
+    {
+        return fs::path(path).is_absolute();
+    }
 
-    ///±ÈÈçÆ¥Åäjpgºó×ºµÄÎÄ¼þ "\\.jpg$"
+    bool IsRelativePath(const Path &path)
+    {
+        return fs::path(path).is_relative();
+    }
+
+    /// ±ÈÈçÆ¥Åäjpgºó×ºµÄÎÄ¼þ "\\.jpg$"
     std::vector<std::string> GetFilesBySuffix(const Path& path, const std::string& extPat)
     {
         std::vector<std::string> result;

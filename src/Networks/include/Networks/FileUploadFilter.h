@@ -1,25 +1,20 @@
 #pragma once
+
 #include <string>
 #include <vector>
 #include <memory>
-#include "FileFilter.h"
 
-
-namespace Communications
+namespace Networks
 {
     class FileUploadFilter
     {
     public:
-        FileUploadFilter();
+        FileUploadFilter() = default;
         ~FileUploadFilter() = default;
 
-        bool isValid(const std::string& filename);
-
-    private:
-        
-        std::unique_ptr<FileFilter> m_filter;
+        virtual bool IsValid(const std::string& filename) = 0;
     };
     
     
     
-} // namespace Communications
+} // namespace Networks

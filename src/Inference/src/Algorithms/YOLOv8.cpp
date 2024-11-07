@@ -1,6 +1,4 @@
-#include "Inference/Algorithms/YOLOv8.h"
-
-
+#include "Algorithms/YOLOv8.h"
 
 
 namespace Inference

@@ -27,13 +27,6 @@ foreach(filepath ${CPP_FILES})
 endforeach(filepath ${SOURCE_FILE})
 
 
-# file(GLOB_RECURSE INTER_HDR_FILES "src/*.h")
-# # foreach(filepath ${CPP_FILES})
-# #     string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" filename ${filepath})
-# #     list(APPEND inter_header_files ${filename})
-# # endforeach(filepath ${SOURCE_FILE})
-
-
 add_library(
     ${targetname} STATIC 
     ${sources_files}
@@ -42,15 +35,14 @@ add_library(
 
 target_include_directories(
     ${targetname} PRIVATE 
-    ${OpenCV_INCLUDE_DIRS}
+    ${curdir}/src 
     ${OpenVINO_INCLUDE_DIRS}
-    
 )
 
 target_include_directories(
     ${targetname} PUBLIC 
     ${curdir}/include
-    ${curdir}/src
+    ${OpenCV_INCLUDE_DIRS}
 )
 
 

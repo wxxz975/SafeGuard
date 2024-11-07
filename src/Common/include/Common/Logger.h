@@ -9,6 +9,10 @@
 
 namespace Common
 {
+
+    /*
+        format use {}
+    */
     enum class LogLevel
     {
         TRACE,
@@ -30,38 +34,40 @@ namespace Common
         void SetLevel(LogLevel level);
 
         template<typename... Args>
-        void Print(LogLevel level, const char* fmt, Args&&... args)
+        void Print(LogLevel level, const std::string& fmt, Args&&... args)
         {
+            auto formatted_str = fmt::format(fmt, std::forward<Args>(args)...);
+            
             switch (level)
             {
-                case LogLevel::TRACE: {       
-                    spdlog::trace(fmt, std::forward<Args>(args)...);
-                    if(m_output2file) m_logger->trace(fmt, std::forward<Args>(args)...);
+                case LogLevel::TRACE: {    
+                    spdlog::trace(formatted_str);
+                    if(m_output2file) m_logger->trace(formatted_str);
                     break;
                 }
                 case LogLevel::DEBUG: {  
-                    spdlog::debug(fmt, std::forward<Args>(args)...);     
-                    if(m_output2file) m_logger->debug(fmt, std::forward<Args>(args)...);    
+                    spdlog::debug(formatted_str);
+                    if(m_output2file) m_logger->debug(formatted_str);
                     break;
                 }
                 case LogLevel::INFO: {
-                    spdlog::info(fmt, std::forward<Args>(args)...);
-                    if(m_output2file) m_logger->info(fmt, std::forward<Args>(args)...);
+                    spdlog::info(formatted_str);
+                    if(m_output2file) m_logger->info(formatted_str);
                     break;
                 }
                 case LogLevel::WARN: {            
-                    spdlog::warn(fmt, std::forward<Args>(args)...);
-                    if(m_output2file) m_logger->warn(fmt, std::forward<Args>(args)...);
+                    spdlog::warn(formatted_str);
+                    if(m_output2file) m_logger->warn(formatted_str);
                     break;
                 }
                 case LogLevel::ERROR: {
-                    spdlog::error(fmt, std::forward<Args>(args)...);
-                    if(m_output2file) m_logger->error(fmt, std::forward<Args>(args)...);
+                    spdlog::error(formatted_str);
+                    if(m_output2file) m_logger->error(formatted_str);
                     break;
                 }
                 case LogLevel::CRITICAL: {
-                    spdlog::critical(fmt, std::forward<Args>(args)...);
-                    if(m_output2file) m_logger->critical(fmt, std::forward<Args>(args)...);
+                    spdlog::critical(formatted_str);
+                    if(m_output2file) m_logger->critical(formatted_str);
                     break;
                 }
             }

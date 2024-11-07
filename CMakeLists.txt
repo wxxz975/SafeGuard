@@ -10,28 +10,9 @@ option(USE_TEST "compile test" ON)
 
 find_package(nlohmann_json REQUIRED)
 
-add_subdirectory(externals)
+
 add_subdirectory(src)
 
 if (USE_TEST) 
     add_subdirectory(test)
 endif()
-
-
-# add_subdirectory(src/Common)
-# add_subdirectory(src/Communications)
-# add_subdirectory(src/Inference)
-# add_subdirectory(src/XRayDetection)
-
-# add_executable(
-#     ${CMAKE_PROJECT_NAME}
-#     ${CMAKE_SOURCE_DIR}/src/main.cpp
-# )
-
-# target_link_libraries(
-#     ${CMAKE_PROJECT_NAME} PRIVATE 
-#     libcommon 
-#     libcommunications 
-#     libinference 
-#     libxraydetection
-# )

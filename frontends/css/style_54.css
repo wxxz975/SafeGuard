@@ -1,0 +1,181 @@
+.lefttime {
+	margin-bottom: 20px;
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	background-position: top center;
+	width: 100%;
+	/* margin-left: 6% */
+}
+
+.lefttime_text>ul {
+	/* display: flex;
+	justify-content: space-around;
+
+	flex-wrap: wrap; */
+	
+	width: 100%;
+	max-height: 400px;
+	height: 400px;
+	overflow-y: scroll;
+}
+
+
+
+.lefttime_text>ul>li {
+	width: 30%;
+	font-size: 14px;
+	color: rgba(255, 255, 255, .9);
+	text-align: center;
+	height: 40px;
+	line-height: 40px;
+	float: left;
+	margin-left: 10px;
+	border-radius: 4px;
+	margin-top: 20px;
+	transition: .5s;
+	cursor: pointer;
+}
+
+
+.lefttime_text li.bg {
+	background: rgba(0, 183, 238, .1);
+}
+
+.lefttime_text li.active {
+	background: rgba(0, 183, 238, .6);
+	color: #fff;
+}
+
+
+.set_left>ul{
+	justify-content: unset;
+}
+.set_left>ul>li{
+	width: 10%;
+	margin-left: 30px;
+}
+.tds{
+	height:39vh
+}
+
+.tds_add {
+	box-shadow: inset -3px -2px 100px 3px rgba(255, 0, 0, .7), inset 3px 2px 100px 3px rgba(255, 0, 0, .7);
+
+}
+
+.tds>img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+
+.tith2 {
+	text-align: center;
+	width: 100%;
+	font-size: 18px;
+	padding-top: 1.9%;
+	font-weight: normal;
+	letter-spacing: 2px;
+	font-weight: normal;
+	overflow: hidden;
+}
+
+.tith2 span {
+	display: inline-block;
+	float: left;
+	width: 40%;
+}
+
+
+
+/* 详细信息*/
+.serviceForm {
+
+	width: 100%;
+
+}
+
+.statusList {
+	/* width: 90%; */
+	margin: 0 auto;
+	margin-top: 5px;
+
+}
+
+
+.statusList:nth-child(2){
+	max-height: 306px;
+	overflow-y: scroll;
+}
+
+
+.statusList .seTable,
+.add_info {
+	width: 100%;
+	padding-bottom: 0px;
+	overflow: hidden;
+	display: flex;
+	justify-content: space-around;
+}
+
+.statusList .seTable li,
+.add_info li {
+	/* object-fit:contain; */
+	width: 18%;
+	font-size: 14px;
+	color: #fff;
+	/* background: #093e79; */
+	padding: 10px 0;
+	margin-right: 6px;
+	text-align: center;
+	line-height: 5px;
+	height: 3vh;
+}
+
+.add_info {
+	margin-top: 5px;
+	border-bottom: 1px solid #add3ff;
+}
+
+
+.add_info_main{
+	box-shadow: inset -3px -2px 5px 3px #add3ff, inset 3px 2px 5px 3px #add3ff;
+}
+
+
+.statusList .seTable .outlineBorder {
+	font-size: 14px;
+}
+
+.statusList .outlineBorder ul {
+	height: 40px;
+}
+
+.statusList .outlineBorder ul:nth-child(odd) {
+	color: #3e90f7;
+}
+
+.statusList .outlineBorder ul:nth-child(even) {
+	color: #8ec0ff;
+}
+
+.statusList .outlineBorder ul li {
+	float: left;
+	width: 20%;
+	height: 20px;
+	line-height: 30px;
+	padding: 10px 0;
+	text-align: center;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.statusList .outlineBorder ul li:first-child {
+	font-size: 12px !important;
+}
+
+
+/* 统计图 */
+#wordCloud{width:520px;height:420px;display:inline-block;left: 20px;}
+#line_chart{width:1300px;height:380px;display:inline-block}

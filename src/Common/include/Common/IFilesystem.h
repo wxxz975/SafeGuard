@@ -56,6 +56,11 @@ namespace IFilesystem
     /// @return 返回父级目录
     Path GetParentPath(const Path& path);
 
+    bool IsAbsolutePath(const Path& path);
+
+    
+    bool IsRelativePath(const Path& path);
+
 
     /// @brief 根据文件的后缀匹配
     /// @param path 查询的路径

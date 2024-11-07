@@ -1,0 +1,24 @@
+
+
+
+{
+    "config_path": "",
+    "loop_Interval": 1000,  // ms
+    "Inference": {
+        "iou_threshold":    0.5,
+        "conf_thrshold":    0.55,
+
+        "model_path":       "/home/wxxz/workspace/weights/yolov8-durlray.onnx",         // onnx model path
+        "model_type":       "YOLOv8",                                                   // YOLOv3|YOLOv5|YOLOv8|RTDetr
+        "framework":        "OpenVINO",                                                 // OpenVINO|ONNXRuntime|TensorRT
+
+        "infer_source_type": 2,     // 0=image file or image dir|1=video file|2=network|3=camera
+        "infer_source":      ""     //  only if the infer_source_type = 0 or 1 enable, represent the source path
+    },
+    "Networks": {
+        "root_doc":     "../frontends",         // relative path to current executable
+        "listen_port":  8080
+    }
+
+
+}

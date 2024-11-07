@@ -1,7 +1,8 @@
 #pragma once
-#include "CivetServer.h"
 
-namespace Communications
+#include "civetweb/CivetServer.h"
+
+namespace Networks
 {
     class HttpRequest;
 
@@ -11,13 +12,13 @@ namespace Communications
         HttpRequestParser() = delete;
         ~HttpRequestParser() = delete;
 
-        static HttpRequest parseRequest(mg_connection* conn);
+        static HttpRequest ParseRequest(mg_connection* conn);
 
     private:
-        static void getHeaders(HttpRequest* req, const mg_request_info* reqInfo);
+        static void GetHeaders(HttpRequest* req, const mg_request_info* reqInfo);
 
     };
     
     
     
-} // namespace Communications
+} // namespace Networks

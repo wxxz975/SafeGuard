@@ -1,9 +1,12 @@
 #include "InferenceEngineImpl.h"
 
-#include "Inference/Algorithms/AlgorithmsFactory.h"
-#include "Inference/LowerFramework/LowerFrameworkFactory.h"
+#include <opencv2/opencv.hpp>
+
+#include "Algorithms/AlgorithmsFactory.h"
+#include "LowerFramework/LowerFrameworkFactory.h"
 
 #include "Common/Logger.h"
+#include "Common/IFilesystem.h"
 
 namespace Inference
 {
@@ -32,17 +35,18 @@ namespace Inference
     {
         cv::Mat img = cv::imread(img_path);
         
-        return Infer(img);
+        auto boxes = Infer(img);
+        
+        return boxes;
     }
 
     Base::OutputBoxes InferenceEngineImpl::Infer(const cv::Mat &img)
     {
-        // fixme: confidence threshold, iou threshold
-        InferenceContextPtr ctx = std::make_shared<InferenceContext>();
+        InferenceContextPtr ctx = std::make_shared<InferenceContext>(m_iou_default, m_conf_default);
         auto inputs = m_prepos->Preprocessing(img, ctx);
         auto outputs = m_framework->Infer(inputs);
         auto boxes = m_prepos->Postprocessing(outputs, ctx);
-
+        if(m_general_callback) m_general_callback(boxes);
         return boxes;
     }
 
@@ -51,7 +55,6 @@ namespace Inference
         m_thread_pool->enqueue(
             [&](){
                 auto output = Infer(img_path);
-                callback(output);
             }
         );
     }
@@ -61,14 +64,37 @@ namespace Inference
         m_thread_pool->enqueue(
             [&](){
                 auto output = Infer(img);
-                callback(output);
             }
         );
+    }
+
+    cv::Mat InferenceEngineImpl::RenderBoxes(const cv::Mat &img, const Base::OutputBoxes &boxes)
+    {
+        return m_prepos->RenderBoxes(boxes, img);
     }
 
     cv::Mat InferenceEngineImpl::RenderBoxes(const std::string &img_path, const Base::OutputBoxes& boxes)
     {
         return m_prepos->RenderBoxes(boxes, img_path);
+    }
+
+    void InferenceEngineImpl::RenderBoxes(const std::string &img_path, const Base::OutputBoxes &boxes, const std::string &save_path)
+    {
+        using namespace Common::IFilesystem;
+        cv::Mat rendered = RenderBoxes(img_path, boxes);
+        
+        std::string save_path_ = save_path.empty() ? 
+            ConcatPath(GetParentPath(img_path), "rendered_"+ GetFilename(img_path)) : save_path;
+        
+        cv::imwrite(save_path_, rendered);
+    }
+
+    void InferenceEngineImpl::RenderBoxes(const cv::Mat &img, const Base::OutputBoxes &boxes, const std::string &save_path)
+    {
+        using namespace Common::IFilesystem;
+        cv::Mat rendered = RenderBoxes(img, boxes);
+        
+        cv::imwrite(save_path, rendered);
     }
 
     const std::vector<std::string> &InferenceEngineImpl::GetLabels() const
@@ -79,6 +105,29 @@ namespace Inference
         return std::vector<std::string>();
     }
 
+    void InferenceEngineImpl::SetIOUThreshold(float iou)
+    {
+        if(iou < 0 || iou > 1.f) {
+            Common::logWarn("set invalid iou value:{}", iou);
+            return ;
+        }
+        m_iou_default = iou;
+    }
+
+    void InferenceEngineImpl::SetConfidenceThreshold(float conf)
+    {
+        if(conf < 0 || conf > 1.f) {
+            Common::logWarn("set invalid conf value:{}", conf);
+            return ;
+        }
+        m_conf_default = conf;
+    }
+
+    void InferenceEngineImpl::SetGeneralCallback(const Base::AsynInferCallback &callback)
+    {
+        m_general_callback = callback;
+    }
+
     bool InferenceEngineImpl::CreateContext(const std::string &model_path, const std::string &algo_type, const std::string &infer_framework)
     {
         using namespace Algorithms;
@@ -87,8 +136,8 @@ namespace Inference
         auto algo_impl = AlgorithmsFactory::CreateAlgorithm(algo_type);
         auto frameork_impl = LowerFrameworkFactory::CreateFramework(infer_framework);
         if(!algo_impl || !frameork_impl) {
-            Common::logError("Failed to Create Algorithm or Framework. algo:%s, framework:%s", 
-                algo_type.c_str(), infer_framework.c_str());
+            Common::logError("Failed to Create Algorithm or Framework. algo:{}, framework:{}", 
+                algo_type, infer_framework);
             return false;
         }
 
@@ -111,6 +160,7 @@ namespace Inference
         }
 
         return true;
-    };
+    }
+  
 
 } // namespace Inference

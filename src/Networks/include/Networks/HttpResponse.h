@@ -2,7 +2,7 @@
 #include <string>
 #include <map>
 
-namespace Communications
+namespace Networks
 {
     class WebPageHandler;
 
@@ -10,6 +10,7 @@ namespace Communications
     {
     public:
         friend class WebPageHandler;
+        
         enum HttpStatusCode
         {
             kUnknown,
@@ -22,22 +23,24 @@ namespace Communications
         HttpResponse() = default;
         ~HttpResponse() = default;
 
-        HttpResponse& setStatusCode(HttpStatusCode code);
-        HttpResponse& setStatusMessage(const std::string& msg);
-        HttpResponse& addHeader(const std::string& key, const std::string& value);
-        HttpResponse& setBody(const std::string& body);
-        HttpResponse& closeConnection(bool isClose);
-        HttpResponse& setContentType(const std::string& type);
+        HttpResponse& SetStatusCode(HttpStatusCode code);
+        HttpResponse& SetStatusMessage(const std::string& msg);
+        HttpResponse& AddHeader(const std::string& key, const std::string& value);
+        HttpResponse& SetBody(const std::string& body);
+        HttpResponse& CloseConnection(bool isClose);
+        HttpResponse& SetContentType(const std::string& type);
 
 
-        void setSimpleResponse(HttpStatusCode statusCode, const std::string& statusMsg, 
+        void SetSimpleResponse(HttpStatusCode statusCode, const std::string& statusMsg, 
                 const std::string& body, bool isClose, const std::string& contentType = "text/plain");
-        void setErrorResponse(const std::string& body);
-        void setUnknownErrorResponse(const std::string& body);
+        void SetErrorResponse(const std::string& body);
+        void SetUnknownErrorResponse(const std::string& body);
 
-        void setOkResponse(const std::string& body);
+        void SetOkResponse(const std::string& body);
 
-        void setJsonResponse(const std::string& json);
+        void SetJsonResponse(const std::string& json);
+
+        void SetFileResponse(const std::string& filepath);
 
     private:
         HttpStatusCode m_statusCode;
@@ -45,6 +48,9 @@ namespace Communications
         std::map<std::string, std::string> m_headers;
         std::string m_body;
         bool m_closeConnection;
+
+        bool m_sendfile = false;
+        std::string m_filepath;
     };
 
-} // namespace Communications
+} // namespace Networks

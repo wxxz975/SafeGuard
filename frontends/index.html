@@ -1,0 +1,504 @@
+﻿<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="robots" content="">
+	<meta name="author" content="">
+	<meta name="Content-Type" content="text/html; utf-8">
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+	<title>index</title>
+
+	<script type="text/javascript" src="js/echarts.min.js"></script>
+	<script language="javascript" type="text/javascript" src="js/echarts-wordcloud.js"></script>
+
+
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/style_54.css">
+	<link rel="stylesheet" href="css/ani.css">
+
+
+	<style>
+	</style>
+
+</head>
+
+<body>
+	<!-- animation -->
+	<div class="ani">
+		<div class="ani_o">
+			<div class="ani_t" style="--i:0">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div class="ani_t" style="--i:1">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div class="ani_t" style="--i:2">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div class="ani_t" style="--i:3">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div class="ani_t" style="--i:1">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div class="ani_t" style="--i:2">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div class="ani_t" style="--i:3">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div class="ani_t" style="--i:4">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div class="ani_t" style="--i:2">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+
+			<div class="ani_t" style="--i:3">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+
+			<div class="ani_t" style="--i:4">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div class="ani_t" style="--i:5">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div class="ani_t" style="--i:3">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div class="ani_t" style="--i:4">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div class="ani_t" style="--i:5">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div class="ani_t" style="--i:6">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="max_img " style="position: fixed;top: 0px;display: none;z-index: 20;background: #fff;">
+		<div class="db_img" >
+			<ul>
+				<!-- <li>
+					<img src="" style="width:100%;margin: auto;display: block;height: 1080px;position: absolute;">
+				</li> -->
+			</ul>
+			<!-- <img src="" style="width:100%;margin: auto;display: block;height: 1080px;position: absolute;"> -->
+		</div> 
+		<!-- <div class="div_img">
+
+			 <img src="" style="width:100%;margin: auto;display: block;height: 1080px;"> 
+
+
+		</div> -->
+		<div class="vi_back tds_add"
+			style="z-index: 11;position: fixed;top: 0px;width: 100%;display: none;height:100%;"></div>
+		<span
+			style="color: red;z-index: 50;position: absolute;top: 20px;right: 20px;color: #000;font-weight: bold;font-size: 5vh;cursor: pointer;user-select: none;">
+			X
+		</span>
+	</div>
+
+
+
+	<div class="head clearfix">
+		<div class="menu menu2 pulll_left">
+			<ul class="conversion">
+				<li><a href="#" name="index" ip="1" style="color:  #f4e925">主界面</a></li>
+				<li><a href="#" name="settings" ip="2">设置</a></li>
+				<li><a href="#" name="statistics" ip="3">统计</a></li>
+				<li><a href="#" name="update" ip="4">帮助</a></li>
+				<!-- <li><a href="#" name="help" ip="5">帮助</a></li> -->
+
+
+
+			</ul>
+		</div>
+
+		<h1 class="pulll_left">X光安检图像智能分析系统</h1>
+
+		<div
+			style="position: absolute;height: 40px;line-height: 40px;top: 25px;left: 66%;display: none;justify-content: space-around;background: rgba(0,0,0,0);">
+
+
+			<select id="selectElem">
+				<option selected="selected" disabled="disabled" style='display: none' value=''></option>
+				<!-- <option value="123">123</option>
+					<option value="456">456</option> -->
+			</select>
+
+		</div>
+
+		<div class="time" id="showTime">2018/6/12 17:00:12</div>
+	</div>
+
+	<ul class="mainbox">
+		<li name="index">
+			<div>
+
+				<ul class="clearfix nav1">
+					<li style="width: 22%">
+						<div class="box " style="">
+							<div class="lefttime">
+								<h2 class="tith2" style="margin-top: 20px;">选中违禁物类别</h2>
+								<div class="lefttime_text" style="margin-top: 20px;">
+									<ul class='box_type' style="padding: 10px;">
+										<!-- <li>123</li>
+								<li>123</li>
+								<li>123</li>
+								<li>123</li> -->
+									</ul>
+								</div>
+							</div>
+
+						</div>
+						<div class="box">
+							<div class="tit">当前违禁物品数量</div>
+							<div class="boxnav">
+								<div id="echart2" style="width: 430px;"></div>
+
+							</div>
+						</div>
+					</li>
+					<li style="width: 56%">
+
+						<div class="box box_center">
+							<div class="box_center_banner">
+								<ul>
+									<li></li>
+									<!-- <li><img src="./img/1.jpg" alt=""></li>
+								<li><img src="./img/2.jpg" alt=""></li>
+								<li><img src="./img/3.jpg" alt=""></li>
+								<li><img src="./img/4.jpg" alt=""></li> -->
+								</ul>
+							</div>
+
+							<div class="jt">
+								<span class="box_center_left">&lt;</span>
+								<span class="box_center_right">&gt;</span>
+							</div>
+
+
+
+
+						</div>
+						<div class="box">
+							<div class="tit">检测违禁品详情</div>
+							<div class="serviceForm" style="height: 306px;">
+
+								<div class="statusList">
+									<ul class="seTable" style="border-bottom: 1px solid #add3ff;">
+										<li>序号</li>
+										<li>名称</li>
+										<li>位置</li>
+										<li>置信度</li>
+										<li>时间</li>
+
+									</ul>
+
+								</div>
+								<div class="statusList">
+
+								</div>
+							</div>
+
+						</div>
+					</li>
+					<li style="width: 22%">
+						<div class="box ">
+							<div class="tit">违规物品记录图</div>
+							<div class="right_top ">
+								<!-- <img src="img/1.jpg" alt="">
+							<img src="img/2.jpg" alt="">
+							<img src="img/3.jpg" alt="">
+							<img src="img/4.jpg" alt=""> -->
+							</div>
+
+						</div>
+
+						<div class="mrbox_top_right box" style="overflow: hidden;">
+							<div class="hdrightboxtop">
+								<h2 class="tith2" style="margin-bottom: 20px;font-size: 16px;">标记</h2>
+
+								<div class="left2_table hdleft2_table">
+									<div class="tds " style="position: relative;top:0">
+										<img src="" alt="">
+
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</li>
+				</ul>
+			</div>
+
+
+		</li>
+
+		<li name="settings">
+			<div style="display: flex;justify-content: space-around;margin-top: 30px;">
+				<ul class="clearfix" style="width: 47%;">
+					<li>
+						<div class="box">
+							<div class="lefttime">
+								<h2 class="tith2" style="font-size: 18px;">选中违禁物类别</h2>
+								<div class="lefttime_text set_left" style="margin-top: 20px;padding-bottom: 20px;">
+									<ul>
+										<!-- js有个清除的 -->
+										<!-- <li>1234</li>
+									<li>1234</li>
+									<li>1234</li>
+									<li>1234</li> -->
+									</ul>
+								</div>
+							</div>
+
+						</div>
+
+					</li>
+
+
+					<li style="height: 400px;">
+						<div class="box">
+							<div class="tit">详情设置</div>
+							<div class="serviceForm">
+								<ul class="box_xq">
+
+									<li class="back_color">
+
+										<p>主题颜色：</p>
+										<!-- #081325 #174a9b  #1e69e0-->
+										<div class="zt_on" style="background: #081325;"></div>
+										<div class="zt_on" style="background: #1a222e;"> </div>
+										<div class="zt_on" style="background: #001b46;"></div>
+									</li>
+									<li></li>
+									<li>
+
+										<p>线框粗细：</p>
+										<input type="range" min="1" max="10" value="5" id="range">
+										<span class="range_span" style="margin-left: 5px;">5</span>
+
+									</li>
+									<li class="linear_color">
+										<p>线框颜色：</p>
+										<!-- 传  rgb颜色 -->
+										<!-- #081325 #174a9b  #1e69e0-->
+										<div class="zt_on" style="background: #ff0d0d;" cl="#ff0d0d;"></div>
+										<div style="background: #24ff1c;" cl="#24ff1c;"> </div>
+										<div style="background: #eeff05;" cl="#eeff05;"></div>
+									</li>
+									<li>
+
+										<p>置信度：</p>
+										<input type="range" min="0" max="1" value="0.850" step="0.001" id="confidence">
+										<span class="confidence_span" style="margin-left: 5px;">0.85</span>
+
+									</li>
+									<li></li>
+
+								</ul>
+
+							</div>
+
+						</div>
+					</li>
+				</ul>
+
+				<ul class="clearfix" style="width: 47%">
+
+
+					<li>
+						<div class="box">
+							<div class="tit">设置示例</div>
+							<div class="serviceForm ser_sl" style="position: relative;height: 866px;">
+								<div class="ser"
+									style="width: 209px;height: 333px;border: 1px solid red;position: absolute;top: 479px;left: 153px;">
+								</div>
+								<img src="images/P02279.jpg" alt="">
+							</div>
+						</div>
+					</li>
+				</ul>
+
+			</div>
+
+		</li>
+
+
+		<li name="statistics">
+			<div>
+				<ul class="clearfix nav1 mainbox_ul">
+					<li style="width: 67%;">
+
+						<div class="box">
+
+
+							<div class="lefttime">
+								<h2 class="tith2" style="">违禁物类别统计</h2>
+								<div class="allnav" id="echart1"></div>
+							</div>
+						</div>
+					</li>
+					<li style="width: 30%;">
+						<div class="box">
+							<div class="lefttime">
+								<h2 class="tith2" style="margin-top: 20px;">违禁物类别统计</h2>
+								<div class="allnav" id="echart3" style="margin-top: 10px;height: 400px;">
+
+								</div>
+							</div>
+					</li>
+				</ul>
+				<ul class="clearfix nav1 mainbox_ul" style="margin-top: 30px;">
+					<li style="width: 30%">
+						<div class="box">
+							<h2 class="tith2" style="margin-top: 10px;">词云图</h2>
+
+							<div id="wordCloud"></div>
+						</div>
+					</li>
+					<li style="width: 67%;">
+						<div class="box">
+							<div class="box_time">
+								<input type="date" class="box box_times" style="" id="time_start">
+								-
+								<input type="date" class="box box_times" style="margin-left: 5px;" id="time_end">
+							</div>
+							<h2 class="tith2">30日违禁物类别统计</h2>
+							<div id="line_chart"></div>
+
+
+						</div>
+					</li>
+				</ul>
+
+			</div>
+
+		</li>
+
+		<li name="update">
+			<!-- 传输池子 -->
+
+			<ul class="update_main">
+				<li class="box">
+					<div class="lefttime" style="width: 80%;margin: auto;">
+						<p>当前版本号： <span>v1.0.0</span></p>
+						<div style="display: flex;margin-top: 90px;font-size: 30px;align-items: center;">
+							<p>新版本检测： </p>
+							<div class="active update_button" id="jc_update" style="margin-left:30px ;">检测更新</div>
+						</div>
+
+
+						<p>新版本信息：<span style="font-size: 18px;">Lorem ipsum dolor sit amet consectetur adipisicing elit.
+								Harum unde assumenda neque, sequi eligendi, expedita veritatis placeat aut quae hic
+								tempore. Deleniti voluptas doloribus aliquam optio, saepe magni pariatur.
+								Aliquam!</span></p>
+
+						<!-- 进度条 -->
+						<div style="display: flex;align-items: center;margin-top: 90px;">
+							<button class="active update_button" id="bb_update">更新系统</button>
+							<div style="display: flex;align-items: center;margin-left: 80px;">
+								<div class="progress">
+									<div class="progress_load"></div>
+
+								</div>
+								<span class="progress_load_result"></span>
+							</div>
+						</div>
+
+					</div>
+				</li>
+				<li class="box">
+					<div class="tit">PDF帮助文档</div>
+					<!-- <div id="pdf-container" style="width:100%;height: 850px; overflow: auto;margin: auto;margin: 10px;"></div> -->
+					<iframe style="width: 95%; height: 95%;margin: 10px;" src="./js/test.pdf"></iframe>
+
+				</li>
+			</ul>
+
+
+
+
+		</li>
+
+
+		<!-- <li name="help">
+			help
+			<div id="pdf-container" style="width:1900px;height: 900px; overflow: auto;margin: auto;margin: 30px 0 0 20px;"></div>
+
+		</li> -->
+	</ul>
+
+
+
+	<script src="./js/name_map.js"></script>
+	<script src="js/index.js"></script>
+	<script src="js/url.js"></script>
+
+
+	<script>
+
+		var tt = null;
+		tt = setTimeout(time, 1000);//開始运行
+		function time() {
+			clearTimeout(tt);//清除定时器
+			dt = new Date();
+			var y = dt.getFullYear();
+			var mt = dt.getMonth() + 1;
+			var day = dt.getDate();
+			var h = dt.getHours();//获取时
+			var m = dt.getMinutes();//获取分
+			var s = dt.getSeconds();//获取秒
+			document.getElementById("showTime").innerHTML = y + "/" + mt + "/" + day + " " + h + ":" + m + ":" + s + "";
+			tt = setTimeout(time, 1000); //设定定时器，循环运行     
+		}
+
+
+	</script>
+
+
+
+</body>
+
+</html>

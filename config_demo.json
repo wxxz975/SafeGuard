@@ -1,0 +1,25 @@
+
+
+
+{
+    "config_path": "",
+    "loop_Interval": 1000,
+    "image_cache_dir": "image_cache", 
+    "Inference": {
+        "iou_threshold":    0.5,
+        "conf_threshold":    0.55,
+
+        "model_path":       "/home/wxxz/workspace/weights/COCO/YOLOv8/yolov8s.onnx",         
+        "model_type":       "YOLOv8",                                                   
+        "framework":        "OpenVINO",                                                 
+
+        "image_source_type": 1,     
+        "image_source":      "/home/wxxz/workspace/datasets/test.flv"     
+    },
+    "Networks": {
+        "root_doc":     "../frontends",         
+        "listen_port":  8080
+    }
+
+
+}

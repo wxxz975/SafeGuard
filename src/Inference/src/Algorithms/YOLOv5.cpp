@@ -1,4 +1,4 @@
-#include "Inference/Algorithms/YOLOv5.h"
+#include "Algorithms/YOLOv5.h"
 #include "Common/Utils.h"
 #include "Common/Logger.h"
 
@@ -94,8 +94,8 @@ namespace Inference
                 auto shape = VecToStr(model_output_shape);
                 auto shapeNew = VecToStr(m_theoryOutShape_new);
                 auto shapeOld = VecToStr(m_theoryOutShape_old);
-                Common::logError("OutputShape:%s, imcompatiable with ShapeNew:%s or ShapeOld:%s\n", 
-                    shape.c_str(), shapeNew.c_str(), shapeOld.c_str());
+                Common::logError("OutputShape:{}, imcompatiable with ShapeNew:{} or ShapeOld:{}\n", 
+                    shape, shapeNew, shapeOld);
             }
 
 

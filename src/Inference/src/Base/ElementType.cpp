@@ -1,4 +1,5 @@
 #include "Inference/Base/ElementType.h"
+#include <cstdint>
 #include <assert.h>
 
 

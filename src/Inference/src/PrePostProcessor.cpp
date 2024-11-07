@@ -1,4 +1,4 @@
-#include "Inference/PrePostProcessor.h"
+#include "PrePostProcessor.h"
 
 
 namespace Inference
@@ -25,5 +25,9 @@ namespace Inference
     cv::Mat PrePostProcessor::RenderBoxes(const std::vector<Base::BoundingBox> &boxes, const std::string &image_path)
     {
         return m_impl->RenderBoxes(boxes, image_path);
+    }
+    cv::Mat PrePostProcessor::RenderBoxes(const std::vector<Base::BoundingBox> &boxes, const cv::Mat &image)
+    {
+        return m_impl->RenderBoxes(boxes, image);
     }
 } // namespace Inference

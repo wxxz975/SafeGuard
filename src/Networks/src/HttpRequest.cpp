@@ -1,9 +1,9 @@
-#include "HttpRequest.h"
+#include "Networks/HttpRequest.h"
 
 
-namespace Communications
+namespace Networks
 {
-    std::string HttpRequest::getHeader(const std::string &key)
+    std::string HttpRequest:: GetHeader(const std::string &key) const
     {
         std::string value;
         const auto& iter = m_headers.find(key);
@@ -14,13 +14,13 @@ namespace Communications
         return value;
     }
 
-    void HttpRequest::addHeader(const std::string &key, const std::string &value)
+    void HttpRequest::AddHeader(const std::string &key, const std::string &value)
     {
         m_headers[key] = value;
     }
 
-    void HttpRequest::setMethod(const std::string& method) { 
-        if(method == "GET") {
+    void HttpRequest::SetMethod(const std::string& method) { 
+        if(method == "Get") {
             m_method = Method::kGet;
         }else if(method == "POST") {
             m_method = Method::kPost;
@@ -29,4 +29,4 @@ namespace Communications
         }
     };
 
-} // namespace Communications
+} // namespace Networks

@@ -1,14 +1,31 @@
 #pragma once
-#include "FileFilter.h"
 #include <string>
 #include <vector>
+#include <memory>
 
-class ImageFilter: public FileFilter
+#include "Networks/FileUploadFilter.h"
+
+#include "SuffixFilter.h"
+
+namespace Networks
 {
-public:
-    ImageFilter();
-    ~ImageFilter() = default;
+    class ImageFilter: public FileUploadFilter
+    {
+    public:
+        ImageFilter();
+        ~ImageFilter() = default;
+
+        virtual bool IsValid(const std::string& filename) override;
+
+    private:
+        
+        const static std::vector<std::string> suffixes;
+        std::unique_ptr<SuffixFilter> m_filter;
+    };
+
     
-    const static std::vector<std::string> suffixes;
-};
+} // namespace Networks
+
+
+
 

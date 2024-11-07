@@ -1,5 +1,5 @@
 #pragma once
-#include "Inference/Framework.h"
+#include "Framework.h"
 
 namespace Inference
 {

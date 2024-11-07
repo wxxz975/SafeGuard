@@ -1,16 +1,17 @@
 #pragma once
 
-#include "CivetServer.h"
-#include "Noncopyable.h"
-
 #include <string>
 #include <map>
 
-namespace Communications
+
+#include "civetweb/CivetServer.h"
+
+
+namespace Networks
 {
     class HttpResponse;
 
-    class WebPageHandler: public Noncopyable, public CivetHandler 
+    class WebPageHandler: public CivetHandler 
     {
     public:
         WebPageHandler() = default;
@@ -18,27 +19,28 @@ namespace Communications
 
         virtual bool Initialize(void* user_data) { return true; };
 
-        bool handleGet(CivetServer *server, struct mg_connection *conn) override;
+    public:
         
-        bool handlePost(CivetServer *server, struct mg_connection *conn) override; 
+        virtual bool handleGet(CivetServer *server, struct mg_connection *conn) override;
+        
+        virtual bool handlePost(CivetServer *server, struct mg_connection *conn) override; 
         
 
     private:
-        bool checkAuth(struct mg_connection* conn);
+        bool CheckAuth(struct mg_connection* conn);
 
     protected:
-        virtual bool handleGetImpl(HttpResponse* resp, struct mg_connection *conn) { return true; };
-        virtual bool handlePostImpl(HttpResponse* resp, struct mg_connection *conn) { return true; };
+        virtual bool HandleGetImpl(HttpResponse* resp, struct mg_connection *conn) { return true; };
+        virtual bool HandlePostImpl(HttpResponse* resp, struct mg_connection *conn) { return true; };
 
 
     protected:
         void ApplyResponse(const HttpResponse& res, struct mg_connection* conn);
 
-    private:
-
+    
     };
     
     
     
     
-} // namespace Communications
+} // namespace Networks

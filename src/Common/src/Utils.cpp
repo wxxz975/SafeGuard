@@ -1,5 +1,7 @@
 #include "Common/Utils.h"
 #include <algorithm>
+#include <ctime>
+#include <iomanip>
 
 namespace Common
 {
@@ -41,6 +43,20 @@ namespace Common
         }
 
         return labels;
+    }
+
+    std::string GetCurrentTimestamp() {
+        auto now = std::time(nullptr);
+        std::tm localTime;
+    #ifdef _WIN32
+        localtime_s(&localTime, &now); // Windows
+    #else
+        localtime_r(&now, &localTime); // Unix/Linux
+    #endif
+
+        std::ostringstream oss;
+        oss << std::put_time(&localTime, "%Y%m%d_%H%M%S");
+        return oss.str();
     }
     
 } // namespace Common

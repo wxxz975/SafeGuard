@@ -1,9 +1,9 @@
-#include "Inference/Algorithms/AlgorithmsFactory.h"
+#include "Algorithms/AlgorithmsFactory.h"
 
-#include "Inference/Algorithms/YOLOv3.h"
-#include "Inference/Algorithms/YOLOv5.h"
-#include "Inference/Algorithms/YOLOv8.h"
-#include "Inference/Algorithms/RTDetr.h"
+#include "Algorithms/YOLOv3.h"
+#include "Algorithms/YOLOv5.h"
+#include "Algorithms/YOLOv8.h"
+#include "Algorithms/RTDetr.h"
 
 #include <cassert>
 
@@ -11,13 +11,6 @@ namespace Inference
 {
     namespace Algorithms
     {
-        const std::unordered_map<std::string, AlgorithmsType> AlgorithmsFactory::m_str2type = 
-        {
-            {"YOLOv3", AlgorithmsType::YOLOv3},
-            {"YOLOv5", AlgorithmsType::YOLOv5},
-            {"YOLOv8", AlgorithmsType::YOLOv8},
-            {"RTDetr", AlgorithmsType::RTDetr}
-        };
         std::unique_ptr<PrePostProcessorImpl> AlgorithmsFactory::CreateAlgorithm(AlgorithmsType type)
         {
             switch (type)
@@ -35,8 +28,8 @@ namespace Inference
 
         std::unique_ptr<PrePostProcessorImpl> AlgorithmsFactory::CreateAlgorithm(const std::string &type)
         {
-            if(m_str2type.count(type)) {
-                AlgorithmsType algo = m_str2type.at(type);
+            if(SupportedModels::IsValid(type)) {
+                AlgorithmsType algo = SupportedModels::GetModelType(type);
                 return CreateAlgorithm(algo);
             }
 

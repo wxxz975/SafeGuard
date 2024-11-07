@@ -1,10 +1,9 @@
 
 
-
 add_subdirectory(Common)
 add_subdirectory(Inference)
-#add_subdirectory(Networks)
-#add_subdirectory(SafeGuard)
+add_subdirectory(Networks)
+add_subdirectory(SafeGuard)
 
 
 add_executable(
@@ -21,10 +20,10 @@ set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
 
 target_link_libraries(
     ${CMAKE_PROJECT_NAME}
-    # libcommon
+    libcommon
     libinference
-    # libnetworks
-    # libsafeguard
+    libnetworks
+    libsafeguard
 )
 
 

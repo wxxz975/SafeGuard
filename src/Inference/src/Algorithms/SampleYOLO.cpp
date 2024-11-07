@@ -1,4 +1,4 @@
-#include "Inference/Algorithms/SampleYOLO.h"
+#include "Algorithms/SampleYOLO.h"
 #include "ImageOps.h"
 
 namespace Inference

@@ -44,10 +44,8 @@ int main(int argc, char* argv[])
                 std::cout << "initialize success!\n";
 
                 auto result = engine.Infer(img_path);
-                cv::Mat rendered = engine.RenderBoxes(img_path, result);
-                std::string save_path = framework + model_name + GetFilename(img_path);
-                cv::imwrite(save_path, rendered);
-
+                engine.RenderBoxes(img_path, result, "");
+                
                 std::cout << GetFilename(img_path) << "inference result:\n"; 
                 for(const auto& iter : result) {
                     std::cout << iter;

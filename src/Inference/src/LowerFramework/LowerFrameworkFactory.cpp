@@ -1,9 +1,9 @@
-#include "Inference/LowerFramework/LowerFrameworkFactory.h"
+#include "LowerFramework/LowerFrameworkFactory.h"
 
 #include <cassert>
 
-#include "Inference/LowerFramework/FONNXRuntime.h"
-#include "Inference/LowerFramework/FOpenVINO.h"
+#include "LowerFramework/FONNXRuntime.h"
+#include "LowerFramework/FOpenVINO.h"
 
 
 namespace Inference
@@ -11,12 +11,6 @@ namespace Inference
 
     namespace LowerFramework
     {
-
-        const std::unordered_map<std::string, FrameworkType> LowerFrameworkFactory::m_str2type = 
-        {
-            {"OpenVINO", FrameworkType::OpenVINO},
-            {"ONNXRuntime", FrameworkType::ONNXRuntime}
-        };
         std::unique_ptr<FrameworkImpl> LowerFrameworkFactory::CreateFramework(FrameworkType framework)
         {
             switch (framework)
@@ -32,8 +26,8 @@ namespace Inference
 
         std::unique_ptr<FrameworkImpl> LowerFrameworkFactory::CreateFramework(const std::string &framework)
         {
-            if(m_str2type.count(framework)) {
-                FrameworkType type = m_str2type.at(framework);
+            if(SupportedFrameworks::IsValid(framework)) {
+                FrameworkType type = SupportedFrameworks::GetFrameworkType(framework);
                 return CreateFramework(type);
             }
 

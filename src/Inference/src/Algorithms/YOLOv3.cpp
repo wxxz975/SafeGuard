@@ -1,4 +1,4 @@
-#include "Inference/Algorithms/YOLOv3.h"
+#include "Algorithms/YOLOv3.h"
 
 
 namespace Inference

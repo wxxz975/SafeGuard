@@ -179,7 +179,7 @@ namespace Inference
 
                 cv::Point labelPosition(box.left, box.top - 10); 
                 std::string label = labels.empty() ? std::to_string(box.class_index) : labels[box.class_index];
-                cv::putText(out, label, labelPosition, cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0), 1);
+                cv::putText(out, label, labelPosition, cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0, 255, 0), 1);
             }
             return out;
         }

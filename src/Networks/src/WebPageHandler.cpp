@@ -1,21 +1,21 @@
-#include "WebPageHandler.h"
+#include "Networks/WebPageHandler.h"
 #include <sstream>
 
-#include "HttpResponse.h"
+#include "Networks/HttpResponse.h"
 
-namespace Communications
+namespace Networks
 {
 
     bool WebPageHandler::handleGet(CivetServer *server, mg_connection *conn)
     {
         HttpResponse resp;
         bool status = false;
-        if(!checkAuth(conn)) {
+        if(!CheckAuth(conn)) {
             // Fixme: 
             return true;
         }
 
-        if(status = handleGetImpl(&resp, conn)) {
+        if(status = HandleGetImpl(&resp, conn)) {
             ApplyResponse(resp, conn);
         }
         
@@ -26,16 +26,16 @@ namespace Communications
     {
         HttpResponse resp;
         bool status = false;
-        if(!checkAuth(conn)) return false;
+        if(!CheckAuth(conn)) return false;
         
-        if(status = handlePostImpl(&resp, conn)) {
+        if(status = HandlePostImpl(&resp, conn)) {
             ApplyResponse(resp, conn);
         }
 
         return status;
     }
 
-    bool WebPageHandler::checkAuth(mg_connection *conn)
+    bool WebPageHandler::CheckAuth(mg_connection *conn)
     {
         return true;
     }
@@ -44,6 +44,11 @@ namespace Communications
     {
         std::stringstream ss;
         
+        if(res.m_sendfile) { 
+            mg_send_file(conn, res.m_filepath.c_str());
+            return;
+        }
+
         // first line
         ss << "HTTP/1.1 " << static_cast<int>(res.m_statusCode) << " "
             << res.m_statusMsg << "\r\n";
@@ -66,4 +71,4 @@ namespace Communications
 
     }
 
-} // namespace Communications
+} // namespace Networks

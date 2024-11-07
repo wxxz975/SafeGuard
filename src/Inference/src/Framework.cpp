@@ -1,5 +1,4 @@
-#include "Inference/Framework.h"
-#include "FrameworkImpl.h"
+#include "Framework.h"
 
 
 namespace Inference
