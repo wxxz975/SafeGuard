@@ -9,21 +9,18 @@ namespace Networks
 {
     std::string SettingsUpdateCommand::Execute(const HttpRequest &req)
     {
-        std::string str_conf = req.GetHeader("conf_threshold");
-        std::string str_iou = req.GetHeader("iou_threshold");
+        std::string str_conf = req.GetParams("conf_threshold");
+        std::string str_iou = req.GetParams("iou_threshold");
+        if(str_conf.empty() || str_iou.empty()) return "";
+
         bool status = true;
         float conf = 0.f;
         float iou = 0.f;
-        try
-        {
-            conf = std::stof(str_conf);
-            iou = std::stof(str_iou);
+        if(!FloatParse(str_conf, conf) || !FloatParse(str_iou, iou)) {
+            Common::logError("[SettingsUpdateCommand] Invalid conf:{} or iou:{} value!", str_conf, str_iou);
+            return "";
         }
-        catch(const std::exception& e)
-        {
-            status = false;
-            Common::logError("Invalid conf_threshold:{} or iou_threshold:{}", str_conf, str_iou);
-        }
+        Common::Logger::logInfo("update iou:{}, conf:{}",iou, conf);
         
         if(status && Check(conf) && Check(iou)) {
             Common::ServiceLocator::Get<Inference::InferenceEngine>().SetIOUThreshold(iou);
@@ -40,5 +37,19 @@ namespace Networks
     bool SettingsUpdateCommand::Check(float v)
     {
         return v > 0.f && v < 1.f;
+    }
+
+    bool SettingsUpdateCommand::FloatParse(const std::string& str, float& ret)
+    {
+        try
+        {
+            ret = std::stof(str);
+        }
+        catch(const std::exception& e)
+        {
+            Common::logError("Invalid string to float value:{}", str);
+            return false;
+        }
+        return true;
     }
 }

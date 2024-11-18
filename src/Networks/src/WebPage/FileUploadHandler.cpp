@@ -42,7 +42,8 @@ namespace Networks
     bool FileUploadHandler::HandlePostImpl(HttpResponse *resp, mg_connection *conn)
     {
         Common::logDebug("Post Request!");
-
+        auto* info = mg_get_request_info(conn);
+        
         if (IsUploadRequest(conn))
         {
             // 设置表单处理的回调

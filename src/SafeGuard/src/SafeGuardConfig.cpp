@@ -18,10 +18,10 @@ namespace SafeGuard
 
             ifs >> root_json;
             if(root_json.contains("loop_Interval")) loop_Interval = root_json["loop_Interval"];
-            Common::logInfo("Main loop interval:{} ms!", loop_Interval);
+            Common::logInfo("[Config] Main loop interval:{} ms!", loop_Interval);
 
             if(root_json.contains("image_cache_dir")) image_cache_dir = root_json["image_cache_dir"];
-            Common::logInfo("image_cache_dir:{}", image_cache_dir);
+            Common::logInfo("[Config] image_cache_dir:{}", image_cache_dir);
             image_cache_dir = ConcatPath(GetCurrentPath(), image_cache_dir);
             if(!IsExist(image_cache_dir)) CreateDir(image_cache_dir);
             

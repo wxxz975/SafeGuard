@@ -11,6 +11,9 @@ namespace Networks
         ~ImageQueryCommand() = default;
 
         virtual std::string Execute(const HttpRequest& req) override;
+
+    private:
+        std::string ParseFilename(const std::string& uri);
     };
     
     

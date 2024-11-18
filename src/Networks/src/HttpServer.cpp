@@ -40,7 +40,7 @@ namespace Networks
         m_civet_srv->addHandler(uri, handler.get());
         m_webpages.insert({uri, std::move(handler)});
     }
-    void HttpServer::AddSocketHandler(const std::string& uri,std::unique_ptr<CivetWebSocketHandler> handler)
+    void HttpServer::AddSocketHandler(const std::string& uri, std::unique_ptr<CivetWebSocketHandler> handler)
     {
         m_civet_srv->addWebSocketHandler(uri, handler.get());
         m_socks.insert({uri, std::move(handler)});

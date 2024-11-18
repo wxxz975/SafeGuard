@@ -7,8 +7,6 @@
 namespace Common
 {
     
-
-
 namespace IFilesystem
 {
     Path GetCurrentPath()

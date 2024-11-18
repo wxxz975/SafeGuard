@@ -21,9 +21,6 @@ namespace SafeGuard
         virtual std::pair<std::string, cv::Mat> NextImage() override; 
 
     private:
-
-
-    private:
         std::string m_path;
         std::vector<std::string> m_images;
         Iter m_imageIter;

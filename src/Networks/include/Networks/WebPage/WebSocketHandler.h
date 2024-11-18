@@ -48,7 +48,7 @@ namespace Networks
 
     private:
         std::vector<SocketClient> m_sockClients;
-        // std::mutex m_mtx;
+        std::mutex m_clientsMutex;
     };
 
 } // namespace Networks

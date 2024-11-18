@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <any>
+#include <stdexcept>
 
 #define SGSERVICE(Type) Common::ServiceLocator::Get<Type>();
 
@@ -26,7 +27,16 @@ namespace Common
 		template<typename T>
 		static T& Get()
 		{
-			return *std::any_cast<T*>(__SERVICES[typeid(T).hash_code()]);
+			auto service = std::any_cast<T*>(__SERVICES[typeid(T).hash_code()]);
+			if (!service) {
+				throw std::runtime_error("Service pointer is null.");
+			}
+			return *service;
+		}
+
+		template<typename T>
+		static bool IsValid(){
+			return __SERVICES.count(typeid(T).hash_code());
 		}
 
 	private:

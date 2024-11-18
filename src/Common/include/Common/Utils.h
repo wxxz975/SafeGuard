@@ -66,10 +66,13 @@ namespace Common
 
 
     // 解析非标准的json数据，key不是字符串类型 
-    std::vector<std::string> ParseJsonRaw(const std::string &raw_json);
+    std::shared_ptr<std::vector<std::string>> ParseJsonRaw(const std::string &raw_json);
 
+    
+    std::string DateToTimestamp(const std::string& dateStr);
 
     std::string GetCurrentTimestamp();
+
 
     template<typename T>
     int FindValueIndex(const std::vector<T>& vec, const T& value)

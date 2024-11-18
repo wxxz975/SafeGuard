@@ -2,7 +2,6 @@
 
 #include "Common/json.hpp"
 
-
 namespace Networks
 {
     using json = nlohmann::json;
@@ -10,29 +9,46 @@ namespace Networks
     std::string ResponseJsonBuilder::CreateHisoryQueryResponse(bool status, const std::string& msg, const std::map<std::string, int>& statistic)
     {   
         json doc;
-        doc["cmd"] = "HistoryQueryResponse";
-        doc["status"] = status;
+        doc["CMD"] = "HistoryQueryResponse";
+        doc["Status"] = status;
         
-        doc["args"]["Message"] = msg;
-        doc["args"]["Statistic"] = statistic;
+        doc["Args"]["Message"] = msg;
+        doc["Args"]["Statistic"] = statistic;
 
         return doc.dump();
-    }
 
+        /*
+            {
+                "cmd":
+                "status": bool
+                "args": {
+                    "Message": "",
+                    "Statistic": {
+                        [
+                            {"Gun": 98},
+                            {"Wrench": 10}
+                        ]
+                    }
+                }
+            }
+        */
+    }
+    
+    
     std::string ResponseJsonBuilder::CreateNewResultMessage(const std::string &filename, 
         const std::vector<Inference::Base::BoundingBox> &boxes, 
-        const std::vector<std::string>& labels)
+         std::shared_ptr<std::vector<std::string>> labels)
     {
         
         json doc;
-        doc["cmd"] = "NewResultMessage";
-        doc["args"]["filename"] = filename;
+        doc["CMD"] = "NewResultMessage";
+        doc["Args"]["Filename"] = filename;
         
-        auto& items = doc["args"]["DetectedItem"];
+        auto& items = doc["Args"]["DetectedItem"];
         for(int idx = 0; idx < boxes.size(); ++idx) {
             int label_idx = boxes[idx].class_index;
             std::array<int, 4> coord = {boxes[idx].left, boxes[idx].top, boxes[idx].width, boxes[idx].height};
-            items[idx]["Label"] = labels[label_idx];
+            items[idx]["Label"] = labels->at(label_idx);
             items[idx]["Confidence"] = boxes[idx].confidence;
             items[idx]["Coordinate"] = coord;
         }
@@ -47,14 +63,14 @@ namespace Networks
         int curModelIdx, int curFrameworkIdx, int curAlgoIdx)
     {
         json doc;
-        doc["cmd"] = "InitResponse";
+        doc["CMD"] = "InitResponse";
         
-        doc["args"]["ModelNames"] = modelLists;
-        doc["args"]["Framworks"] = frameworkLists;
-        doc["args"]["Algorithms"] = algorithmLists;
-        doc["args"]["CurrentModelIndex"] = curModelIdx;
-        doc["args"]["CurrentFrameworkIndex"] = curFrameworkIdx;
-        doc["args"]["CurrentAlgorithmIndex"] = curAlgoIdx;
+        doc["Args"]["ModelNames"] = modelLists;
+        doc["Args"]["Framworks"] = frameworkLists;
+        doc["Args"]["Algorithms"] = algorithmLists;
+        doc["Args"]["CurrentModelIndex"] = curModelIdx;
+        doc["Args"]["CurrentFrameworkIndex"] = curFrameworkIdx;
+        doc["Args"]["CurrentAlgorithmIndex"] = curAlgoIdx;
 
         return doc.dump();
     }
@@ -66,13 +82,13 @@ namespace Networks
                 const std::vector<std::string>& labels)
     {
         json doc;
-        doc["cmd"] = "ModelSwitchResponse";
-        doc["args"]["ModelName"] = modelName;
-        doc["args"]["Framework"] = framework;
-        doc["args"]["Algorithm"] = algo;
+        doc["CMD"] = "ModelSwitchResponse";
+        doc["Args"]["ModelName"] = modelName;
+        doc["Args"]["Framework"] = framework;
+        doc["Args"]["Algorithm"] = algo;
 
 
-        doc["args"]["Labels"] = labels;
+        doc["Args"]["Labels"] = labels;
 
         return doc.dump();
     }
@@ -81,12 +97,24 @@ namespace Networks
         const std::unordered_map<std::string, std::string>& values)
     {
         json doc;
-        doc["cmd"] = "SettingsUpdateResponse";
-        doc["status"] = status;
-        doc["args"] = values;
+        doc["CMD"] = "SettingsUpdateResponse";
+        doc["Status"] = status;
+        doc["Args"] = values;
 
         return doc.dump();
     }
+
+    std::string ResponseJsonBuilder::CreateModelInfoQueryResponse(bool status, std::string& modelname, std::shared_ptr<std::vector<std::string>> labels)
+    {
+        json doc;
+        doc["CMD"] = "ModelInfoQueryResponse";
+        doc["Status"] = status;
+        doc["ModelName"] = modelname;
+        doc["Args"]["Labels"] = labels ? (*labels) : std::vector<std::string>();
+
+        return doc.dump();
+    }
+
 } // namespace Networks
 
 

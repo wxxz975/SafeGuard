@@ -1,6 +1,6 @@
 #include "Common/Utils.h"
 #include <algorithm>
-#include <ctime>
+#include <chrono>
 #include <iomanip>
 
 namespace Common
@@ -24,9 +24,9 @@ namespace Common
         return { maxIndex, maxValue };
     }
 
-    std::vector<std::string> ParseJsonRaw(const std::string &raw_json)
+    std::shared_ptr<std::vector<std::string>> ParseJsonRaw(const std::string &raw_json)
     {
-        std::vector<std::string> labels;
+        std::shared_ptr<std::vector<std::string>> labels = std::make_shared<std::vector<std::string>>();
 
         // 正则表达式模式
         std::regex pattern("'([^']*)'");
@@ -38,25 +38,39 @@ namespace Common
         while (it != end) {
             std::smatch match = *it;
             std::string value = match[1].str();
-            labels.push_back(value);
+            labels->push_back(value);
             ++it;
         }
 
         return labels;
     }
 
-    std::string GetCurrentTimestamp() {
-        auto now = std::time(nullptr);
-        std::tm localTime;
-    #ifdef _WIN32
-        localtime_s(&localTime, &now); // Windows
-    #else
-        localtime_r(&now, &localTime); // Unix/Linux
-    #endif
 
-        std::ostringstream oss;
-        oss << std::put_time(&localTime, "%Y%m%d_%H%M%S");
-        return oss.str();
+    std::string DateToTimestamp(const std::string& dateStr) {
+        std::tm tm = {};
+        std::istringstream ss(dateStr);
+
+        // 解析日期格式 YYYY-MM-DD
+        ss >> std::get_time(&tm, "%Y-%m-%d");
+        if (ss.fail()) {
+            return "";  // 转换失败，返回空字符串
+        }
+
+        // 使用 chrono 将 tm 转换为 time_point
+        std::chrono::system_clock::time_point tp = std::chrono::system_clock::from_time_t(std::mktime(&tm));
+        auto timestamp = std::chrono::duration_cast<std::chrono::seconds>(tp.time_since_epoch()).count();
+
+        // 将时间戳转换为字符串并返回
+        return std::to_string(timestamp);
     }
-    
+
+    std::string GetCurrentTimestamp() {
+        // 获取当前时间点并转换为 time_t
+        auto now = std::chrono::system_clock::now();
+        auto timestamp = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+
+        // 将时间戳转换为字符串并返回
+        return std::to_string(timestamp);
+    }
+
 } // namespace Common

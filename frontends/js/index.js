@@ -1,5 +1,7 @@
 
 
+
+
 let con = document.querySelector(".conversion")   //导航栏
 let mainbox = document.querySelector(".mainbox")    //5个页面
 let menu = document.querySelector(".menu")
@@ -59,7 +61,7 @@ con.onclick = function (e) {
                 } else {  //当转换别的页面时候
 
                     if (bla_name == 1) {
-                        settingsupdata()   //进行更新
+                        SettingsUpdata()   //进行更新
 
                     }
                     bla_name = 0  //初始化
@@ -85,18 +87,6 @@ con.onclick = function (e) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 var appNamelist = document.querySelector("#selectElem")
 //不可选
 // appNamelist.remove(0)
@@ -115,45 +105,100 @@ var DetectedItem = []   //存储违禁物品信息 即使更换模型也不重�
 var flages = 0   //有违禁物品就是1  反之0
 
 
+var g_CurrentModelName = "";
+
+// label : Checked
+var g_CurrentLabelsMap = {
+
+}
 
 
-window.onload = function () {
+function InitCallback (data) {
+    console.log("callback");
+    
+    if (data["Args"] == null) {
+        alert("failed to init!")
+        return 
+    }
 
+    ModelNames = data["Args"]["ModelNames"];
+    modelIndex =  data["Args"]["CurrentModelIndex"];
 
-    // ani  切换模型等待加载    以及首先进入的加载
+    g_CurrentModelName = ModelNames[modelIndex];
+    console.log("Current Model Name:", g_CurrentModelName);
+}
 
-    let xhr = new XMLHttpRequest()
-    xhr.onreadystatechange = function () {
-        if (xhr.status === 200 && xhr.readyState === 4) {
-            let res = JSON.parse(xhr.responseText)
-            let model = res.args.ModelNames
+function ModelInfoQueryCallback(json)
+{
+    if(json["Status"]) {
+        let labels = json["Args"]["Labels"];
+        for(let idx = 0; idx < labels.length; ++idx) {
+            g_CurrentLabelsMap[labels[idx]] = true
+        }
 
-            for (let i = 0; i < model.length; i++) {
-                let option = document.createElement("option")
-                option.value = model[i]
-                option.innerHTML = model[i]
-                appNamelist.appendChild(option)
-
+        for (let g = 0; g < lefttime_text.length; g++) {
+            while (lefttime_text[g].firstChild) { // 清空初始的li内容
+                lefttime_text[g].removeChild(lefttime_text[g].firstChild);
             }
-            LoadModel();
+        
+            for (let i = 0; i < labels.length; i++) { // 赋值创建类别
+                let li = document.createElement("li");
+                li.innerHTML = labels[i];
+                li.classList.add("bg");
+                li.classList.add("active");
+                
+                li.onclick = function () {
+                    if (li.getAttribute("selected") === "on") {
+                        li.setAttribute("selected", "off");
+                        li.classList.remove("active");
+                        g_CurrentLabelsMap[li.innerHTML] = false;
+                    } else {
+                        li.setAttribute("selected", "on");
+                        li.classList.add("active");
+                        g_CurrentLabelsMap[li.innerHTML] = true;
+                    }
+                };
+
+                lefttime_text[g].appendChild(li);
+            }
         }
     }
-    xhr.open("get", getQueryDataUrl())
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
-    xhr.setRequestHeader("cmd", "Init");
-    xhr.send();
+}
 
-    //setTimeout(LoadModel, 2000)
+window.onload = function () {
+    // ani  切换模型等待加载    以及首先进入的加载
+    let result = InitializeCommand(InitCallback)
+    setTimeout(() => {
+        ModelInfoQueryCommand(g_CurrentModelName, ModelInfoQueryCallback)
+    }, 1000); 
+
+    InitDefaultSettings();
+    
+    // let xhr = new XMLHttpRequest()
+    // xhr.onreadystatechange = function () {
+    //     if (xhr.status === 200 && xhr.readyState === 4) {
+    //         let res = JSON.parse(xhr.responseText)
+    //         let model = res.args.ModelNames
+
+    //         for (let i = 0; i < model.length; i++) {
+    //             let option = document.createElement("option")
+    //             option.value = model[i]
+    //             option.innerHTML = model[i]
+    //             appNamelist.appendChild(option)
+
+    //         }
+    //         LoadModel();
+    //     }
+    // }
+    // console.log(ModelSwitchCommand());
+    
+    // xhr.open("get", getQueryDataUrl())
+    // xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+    // xhr.setRequestHeader("cmd", "Init");
+    // xhr.send();
+
+    // setTimeout(LoadModel, 2000)
 };
-
-
-
-
-
-
-
-
-
 
 
 
@@ -171,19 +216,12 @@ setTimeout(() => {
 }, 3000);
 
 
-
-
-
-
-
-
 // 警告
 let vi_back = document.querySelector(".vi_back")
 
 
 // 是否有违禁物品显示相应图片
 let tds = document.querySelector(".tds")
-
 
 
 //违禁物品信息
@@ -196,8 +234,6 @@ let right_top = document.querySelector(".right_top");
 let timers = null  //实时
 
 
-
-
 //模型选择 
 var sortedStatistics = null
 var titlename = []
@@ -206,7 +242,6 @@ var titlenum = []
 let data_pie = []   //统计
 
 let box_type_name = []
-
 
 
 
@@ -221,7 +256,6 @@ LoadModel = function () { //每切换一次model都调用一次
     }
     //let ModelName = appNamelist.children[0].value
 
-
     let xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function () {
         if (xhr.status === 200 && xhr.readyState === 4) {
@@ -234,22 +268,16 @@ LoadModel = function () { //每切换一次model都调用一次
             
             statistics = res.args.statistics  //key:value  类别:数量
 
-
-
             // 违禁物品类别   数据    主页面和设置界面
             sortedStatistics = Object.entries(statistics).sort((a, b) => b[1] - a[1]); //用于主页面和统计界面
             // console.log(sortedStatistics);
             
-            
-            
             // [[类别,数量],[类别,数量],[],[]]
-
 
             //    进行排序分割  //用于主页面和统计界面
             titlename = []  //类别名
             titlenum = []  //对应数量
             for (let n = 0; n < sortedStatistics.length; n++) {
-                
                 titlename[n] = name_map[sortedStatistics[n][0]]
                 titlenum[n] = sortedStatistics[n][1]
             }
@@ -290,9 +318,6 @@ LoadModel = function () { //每切换一次model都调用一次
 
     clearInterval(timers)
     ju_model(ModelName)
-
-
-
 };
 
 
@@ -444,13 +469,10 @@ var data_type = function () {
 
     var data_type = label  //获取类别名
 
-    
-
     //以字典形式存储  类别：数量
     for (let l = 0; l < data_type.length; l++) {
         update_echarts[data_type[l]] = 0
     }
-
 
     // 类别
     for (let g = 0; g < lefttime_text.length; g++) {
@@ -475,13 +497,6 @@ var data_type = function () {
 data_type();
 
 
-
-
-
-
-
-
-
 // 判断是否有违禁物   显示对应图片      
 function warn() {
 
@@ -502,8 +517,10 @@ function warn() {
 
 
 function remove_cla() {  //清空 检测违禁品详情  和  违规物品记录图样式
-    for (let r = 0; r < statusList[1].children.length; r++) {
-        statusList[1].children[r].classList.remove("add_info_main")
+    let resultList = document.querySelectorAll(".statusList");
+    let right_top = document.querySelector(".right_top");
+    for (let r = 0; r < resultList[1].children.length; r++) {
+        resultList[1].children[r].classList.remove("add_info_main")
 
     }
     for (let r = 0; r < right_top.children.length; r++) {
@@ -512,14 +529,13 @@ function remove_cla() {  //清空 检测违禁品详情  和  违规物品记录
 }
 
 //  设置界面
-
-let range = document.querySelector("#range")   //粗细
+//let range = document.querySelector("#range")   //粗细
 let linear_color_div = document.querySelectorAll(".linear_color div") // 线框颜色
 let ser = document.querySelector(".ser")  //展示图
 let color = linear_color_div[0].style.background
 
 //置信度
-let confidence_span = document.querySelector(".confidence_span")
+let confidence_label = document.querySelector(".confidence_label")
 
 // 放大容器
 let max_img = document.querySelector(".max_img")
@@ -527,348 +543,120 @@ let db_img = document.querySelector(".db_img ul")
 
 
 let bor_color = color
-let bor_value = range.value
+//let bor_value = range.value
 let img_width = 0   //原始图片的宽度
 let img_height = 0  //原始图片的高度
 let width_ratio = 0  //原始图片与控件的宽度比值
 let height_ratio = 0  //原始图片与控件的高度比值
 
 
-
-
-// 实时发送请求 获取  OriginalImage DetectedItem 以及更新 违禁物品数量
-// filter
-function r_time() {
-    console.log(123);
-    let xhr = new XMLHttpRequest()
-    xhr.onreadystatechange = function () {
-        if (xhr.status === 200 && xhr.readyState === 4) {
-            if (xhr.responseText != "") {
-
-                let res = JSON.parse(xhr.responseText)
-                if (res) {  //有数据
-
-                    let ba_matrix = []  //矩阵重置
-                    if (res.args.DetectedItem.length != 0) {  //违禁物品信息添加
-                        flages = 1;   //显示标记的 true  false
-                        let uls = document.createElement('ul')
-
-
-                        for (let i = 0; i < res.args.DetectedItem.length; i++) {
-                            let flss = 0  //判断是否画矩阵  默认为0 ：画
-
-
-                            let res_label = name_map[res.args.DetectedItem[i].label]   //获取检测到的类别
-
-                            if (res.args.DetectedItem[i].confidence >= confidence_span.innerHTML) {  //置信度判断
-                                for (let fil = 0; fil < filter.length; fil++) {       //循环筛选的违禁物品类别
-
-                                    if (filter[fil] == res_label) {  //如果后端识别到的违禁物品类别信息里面有手动筛选的违禁物品类别，
-                                        // update_echarts[res_label]=0  //主界面柱状图对应的值置空
-
-                                        // delete ba_matrix[mb]
-                                        // ba_matrix.splice(mb,1) //就删除坐标
-                                        flss = 1
-                                        break
-                                    }
-                                }
-                            } else {
-                                flss = 1
-                            }
-
-                            if (flss == 0) {   //如果置信度，和违禁类别通过  
-                                ba_matrix.push(res.args.DetectedItem[i].coordinate)
-                                //主界面的违禁物品数量统计图实时叠加
-                                update_echarts[name_map[res.args.DetectedItem[i].label]] += 1
-
-
-
-                                //详情
-
-                                let ul = document.createElement('ul')
-                                DetectedItem.push(res.args.DetectedItem[i])
-                                let date = new Date()
-                                ul.classList.add("add_info")
-
-                                let id = document.createElement("li")
-                                let name = document.createElement("li")
-                                let position = document.createElement("li")
-                                let confidence = document.createElement("li")
-                                let time = document.createElement("li")
-
-                                id.innerHTML = DetectedItem.length
-                                name.innerHTML = name_map[res.args.DetectedItem[i].label]
-                                position.innerHTML = res.args.DetectedItem[i].coordinate
-                                confidence.innerHTML = res.args.DetectedItem[i].confidence
-                                time.innerHTML = date.getFullYear() + "\\" + (date.getMonth() + 1) + "\\" + date.getDate() + "\\" + date.getHours() + "\\" + date.getMinutes() + "\\" + date.getSeconds()
-                                ul.appendChild(id)
-                                ul.appendChild(name)
-                                ul.appendChild(position)
-                                ul.appendChild(confidence)
-                                ul.appendChild(time)
-                                uls.prepend(ul)
-                                uls.setAttribute("flages", "1")
-                            }
-
-                        }
-                        uls.classList.add("add_info_main")
-                        statusList[1].prepend(uls)
-
-
-
-                        let div_cj = document.createElement("div")
-
-                        div_cj.classList.add("add_info_main")
-                        div_cj.style.height = "auto"
-                        div_cj.style.marginTop = '20px'
-                        div_cj.style.padding = '10px'
-
-
-                        for (let m = 0; m < ba_matrix.length; m++) {     //框线矩阵  违禁物品
-                            let [a, b, c, d] = [ba_matrix[m][0], ba_matrix[m][1], ba_matrix[m][2], ba_matrix[m][3]]
-                            setTimeout(() => {
-
-                                div_cj.appendChild(cropImage(`${img_url}/${res.args.OriginalImage}`, a, b, c, d))
-
-                            }, 1000)
-
-
-                        }
-                        // 裁剪
-                        right_top.appendChild(div_cj)
-
-                        // // 滚动到容器的底部   每次都追加div_cj的高度  累加
-                        setTimeout(() => {
-                            console.log(div_cj.clientHeight);
-                            right_top.scrollTop += div_cj.clientHeight
-                        }, 2000)
-
-                    } else {
-                        let uls = document.createElement('ul')
-
-                        flages = 0
-                        let ul = document.createElement('ul')
-
-                        ul.style.display = "none"
-
-                        uls.appendChild(ul)
-                        uls.setAttribute("flages", "0")
-                        statusList[1].prepend(uls)
-
-                        let div = document.createElement("div")
-                        div.style.display = 'none'
-                        right_top.appendChild(div)
-                    }
-
-
-                    // 每有一张新的OriginalImage就创建一次 
-
-                    let li = document.createElement('li')
-                    li.style.border = '1px solid #add3ff'
-                    // li.style.background = '#fff'    //修改  
-
-
-
-                    //主图片
-                    let img = document.createElement("img")
-                    let img_url = getQueryAssetUrl()
-                    img.src = `${img_url}/${res.args.OriginalImage}`
-
-
-                    img.style.position = 'absolute'
-                    li.appendChild(img)
-
-                    let db_li = li.cloneNode(true)
-                    // db_li.style.width=1920+'px'
-                    // db_li.style.height=1080+'px'
-
-
-
-                    //console.log(img_width + "   " + img_height)
-                    //获取到的img也需要// position = 'absolute'    创建img
-
-                    //let img_width =0   //原始图片的宽度
-                    //let img_height = 0  //原始图片的高度
-                    //let width_ratio = 0  //原始图片与控件的宽度比值
-                    //let height_ratio = 0  //原始图片与控件的高度比值
-                    var ratio = 0  //最终比例
-
-
-                    if (ba_matrix.length > 0) {
-                        img.onload = function () {
-                            img_width = img.naturalWidth
-                            img_height = img.naturalHeight
-                            width_ratio = 1058 / img_width
-                            height_ratio = 598 / img_height
-                            //console.log(img_width + "   " + img_height)
-                            for (let m = 0; m < ba_matrix.length; m++) {
-                                //框线矩阵  违禁物品
-                                let div = document.createElement("div")
-                                div.style.position = 'absolute'
-                                div.style.zIndex = '10'      //层级  
-                                div.style.border = bor_value + "px solid " + bor_color
-                                let [a, b, c, d] = [ba_matrix[m][0], ba_matrix[m][1], ba_matrix[m][2], ba_matrix[m][3]]
-                                let [real_left, real_top, real_width, real_height] = [0, 0, 0, 0]
-                                if (width_ratio > height_ratio)  //高度比值更小
-                                {
-                                    var p_left = 0  //左坐标起始点
-                                    var p_top = 0  //上坐标起始点
-                                    ratio = height_ratio
-
-                                    p_left = (1058 - img_width * ratio) / 2
-                                    p_top = 0
-                                    real_left = p_left + a * ratio
-                                    real_top = p_top + b * ratio
-                                    real_width = c * ratio
-                                    real_height = d * ratio
-                                    div.style.left = real_left + 'px'
-                                    div.style.top = real_top + 'px'
-                                    div.style.width = real_width + 'px'
-                                    div.style.height = real_height + 'px'
-                                }
-                                else  //宽度比值更小
-                                {
-                                    var p_left = 0  //左坐标起始点
-                                    var p_top = 0  //上坐标起始点
-                                    ratio = width_ratio
-
-                                    p_left = 0
-                                    p_top = (598 - img_height * ratio) / 2
-                                    real_left = p_left + a * ratio
-                                    real_top = p_top + b * ratio
-                                    real_width = c * ratio
-                                    real_height = d * ratio
-                                    div.style.left = real_left + 'px'
-                                    div.style.top = real_top + 'px'
-                                    div.style.width = real_width + 'px'
-                                    div.style.height = real_height + 'px'
-                                }
-                                li.appendChild(div)
-
-
-
-                            }
-
-
-                            // ori_image  违禁物品框线绘制
-                            img_width = img.naturalWidth
-                            img_height = img.naturalHeight
-                            width_ratio = 1920 / img_width
-                            height_ratio = 1080 / img_height
-                            //console.log(img_width + "   " + img_height)
-                            for (let m = 0; m < ba_matrix.length; m++) {
-                                //框线矩阵  违禁物品
-                                let div = document.createElement("div")
-                                div.style.position = 'absolute'
-                                div.style.zIndex = '10'      //层级  
-                                div.style.border = bor_value + "px solid " + bor_color
-                                let [a, b, c, d] = [ba_matrix[m][0], ba_matrix[m][1], ba_matrix[m][2], ba_matrix[m][3]]
-                                let [real_left, real_top, real_width, real_height] = [0, 0, 0, 0]
-                                if (width_ratio > height_ratio)  //高度比值更小
-                                {
-                                    var p_left = 0  //左坐标起始点
-                                    var p_top = 0  //上坐标起始点
-                                    ratio = height_ratio
-
-                                    p_left = (1920 - img_width * ratio) / 2
-                                    p_top = 0
-                                    real_left = p_left + a * ratio
-                                    real_top = p_top + b * ratio
-                                    real_width = c * ratio
-                                    real_height = d * ratio
-                                    div.style.left = real_left + 'px'
-                                    div.style.top = real_top + 'px'
-                                    div.style.width = real_width + 'px'
-                                    div.style.height = real_height + 'px'
-                                }
-                                else  //宽度比值更小
-                                {
-                                    var p_left = 0  //左坐标起始点
-                                    var p_top = 0  //上坐标起始点
-                                    ratio = width_ratio
-
-                                    p_left = 0
-                                    p_top = (1080 - img_height * ratio) / 2
-                                    real_left = p_left + a * ratio
-                                    real_top = p_top + b * ratio
-                                    real_width = c * ratio
-                                    real_height = d * ratio
-                                    div.style.left = real_left + 'px'
-                                    div.style.top = real_top + 'px'
-                                    div.style.width = real_width + 'px'
-                                    div.style.height = real_height + 'px'
-                                }
-
-
-                                db_li.appendChild(div)
-
-                            }
-
-                        }
-                    } else {
-                        flages = 0
-                    }
-                    // console.log(flages);
-
-
-                    setTimeout(() => {  //必须要有，不然来不及渲染，会出现错误
-                        //主界面
-                        echarts_2()
-
-                    }, 500)
-
-                    //sta
-                    echarts_1()
-                    echarts_3()
-                    wordcloud()
-
-                    warn()
-
-
-                    box_center_ul.appendChild(li)
-                    db_img.appendChild(db_li)
-
-
-
-                    // updata
-
-                    let up_li = li.cloneNode(true)//copy一份
-                    //li设置
-                    up_li.style.width = "200px"
-                    up_li.style.height = "200px"
-                    // li里面的img
-                    up_li.children[0].style.width = "200px"
-                    up_li.children[0].style.height = "200px"
-                    up_li.children[0].style.position = "static"
-
-                    //设置图片名字
-                    up_li.children[0].setAttribute("name", res.args.OriginalImage)
-                    //设置为0则  没被传送，  1则传送
-                    up_li.children[0].setAttribute("choice", "0")
-
-
-
-
-
-
-                    box_center_ul.style.width = box_center_ul.children.length + 1 + "00%"
-
-                    banner()
-
-                } else {
-                    console.log("错误");
-                }
-            }
-        }
+function ParseNewResult (raw_data) {
+    let result;
+    if(raw_data != null) {
+        result = JSON.parse(raw_data)
+        if(result["CMD"] != "NewResultMessage") return null; 
     }
-    xhr.open("get", getQueryDataUrl())
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
-    xhr.setRequestHeader("cmd", "QueryResult");
-    xhr.send()
-
+    
+    return result;
 }
 
+const socket = new WebSocket(GetServerSocketUrl());
 
+// 当接收到来自服务器的消息时，执行以下回调函数
+socket.onmessage = function(event) {
+    json = ParseNewResult(event.data);
+    if(json != null) {
+        RenderResult(json);
+    }
+   
+};
+
+function IsValidProhibitedItem(item, conf_threshold)
+{
+    return g_CurrentLabelsMap[item.Label] && item.Confidence >= conf_threshold;
+}
+
+var g_StatisticsToday = {
+    
+}
+
+var g_DetectedItemList = []
+
+
+function RenderResult(json) {
+    let filename = json["Args"]["Filename"];
+    let boxes = json["Args"]["DetectedItem"];
+    let conf_threshold = document.querySelector('.confidence_label').innerHTML
+    let has_prohibit_item = true;
+    let ulist = document.createElement('ul')
+
+    for(let idx = 0; idx < boxes.length; ++idx) {
+        let res_label = name_map[boxes[idx].Label]   //获取检测到的类别: chinese 
+        if(IsValidProhibitedItem(boxes[idx], conf_threshold)) {
+            has_prohibit_item = true;
+        }
+
+        if(has_prohibit_item) 
+        {
+            ba_matrix.push(boxes[idx].Coordinate)       // 
+                    //主界面的违禁物品数量统计图实时叠加
+            update_echarts[name_map[boxes[idx].Label]] += 1 // g_StatisticsToday[boxes[idx].Label] += 1;
+                    //详情
+            let ul = document.createElement('ul')       
+            DetectedItem.push(boxes[idx])               // g_DetectedItemList.push(boxes[idx]);
+            let date = new Date()
+            ul.classList.add("add_info")
+    
+            let id = document.createElement("li")
+            let name = document.createElement("li")
+            let position = document.createElement("li")
+            let confidence = document.createElement("li")
+            let time = document.createElement("li")
+    
+            id.innerHTML = DetectedItem.length
+            name.innerHTML = name_map[boxes[idx].label]
+            position.innerHTML = boxes[idx].coordinate
+            confidence.innerHTML = boxes[idx].confidence
+            time.innerHTML = date.getFullYear() + "\\" + (date.getMonth() + 1) + "\\" + date.getDate() + "\\" + date.getHours() + "\\" + date.getMinutes() + "\\" + date.getSeconds()
+            ul.appendChild(id)
+            ul.appendChild(name)
+            ul.appendChild(position)
+            ul.appendChild(confidence)
+            ul.appendChild(time)
+            ulist.prepend(ul)
+            ulist.setAttribute("flages", "1")
+        }
+
+        ulist.classList.add("add_info_main")
+        statusList[1].prepend(ulist)
+        let div_cj = document.createElement("div")
+
+        div_cj.classList.add("add_info_main")
+        div_cj.style.height = "auto"
+        div_cj.style.marginTop = '20px'
+        div_cj.style.padding = '10px'
+        
+
+        for (let m = 0; m < ba_matrix.length; m++) {     //框线矩阵  违禁物品
+            let [a, b, c, d] = [ba_matrix[m][0], ba_matrix[m][1], ba_matrix[m][2], ba_matrix[m][3]]
+            setTimeout(() => {
+
+                div_cj.appendChild(cropImage(`${img_url}/${res.args.OriginalImage}`, a, b, c, d))
+
+            }, 1000)
+        }
+        // 裁剪
+        right_top.appendChild(div_cj)
+
+        // // 滚动到容器的底部   每次都追加div_cj的高度  累加
+        setTimeout(() => {
+            console.log(div_cj.clientHeight);
+            right_top.scrollTop += div_cj.clientHeight
+        }, 2000)
+
+    }
+
+}
 
 
 // banner
@@ -986,7 +774,7 @@ function banner() {
         box_center_ul.style.left = index * -bw + 'px'
 
         // 清除详细信息样式
-        remove_cla()
+        remove_cla();
         statusList[1].children[box_center_ul.children.length - index - 1].classList.add("add_info_main")
         right_top.children[index - 1].classList.add("add_info_main")
 
@@ -1158,17 +946,6 @@ function cropImage(ele, x, y, w, h) {
 }
 
 
-
-
-
-// settings设置界面js
-
-let confidence_sub = document.querySelector("#confidence")
-
-
-let accuracy_span = document.querySelector(".accuracy_span")
-
-
 // change back
 let back_color = document.querySelectorAll(".back_color div")
 for (let j = 0; j < back_color.length; j++) {
@@ -1181,22 +958,15 @@ for (let j = 0; j < back_color.length; j++) {
 
 // 粗细
 
-let range_span = document.querySelector(".range_span")
-let value = 1
-range.addEventListener("input", function () {
-    value = range.value
 
-    range_span.innerHTML = value
-    ser.style.border = value + "px solid " + color
-    bor_value = value
-});
+
 
 
 
 //    col()
 
 // 线框默认值
-ser.style.border = range.value + "px solid " + color
+// ser.style.border = range.value + "px solid " + color
 
 
 for (let i = 0; i < linear_color_div.length; i++) {
@@ -1216,47 +986,66 @@ for (let i = 0; i < linear_color_div.length; i++) {
     }
 }
 
-//   confidence
+// the confidence default value
+var g_conf_default_value = 0.5;
+var g_line_thickness_default_value = 1;
+function InitDefaultSettings()
+{
+    let conf_input = document.querySelector("#confidence")
+    let confidence_label = document.querySelector(".confidence_label");
 
-confidence.addEventListener("input", function () {
-    const value = confidence.value;
-    confidence_span.innerHTML = value
+    confidence_label.innerHTML = g_conf_default_value;
+    confidence.value = g_conf_default_value;
 
-
-});
-
-
-
-// 提交设置
-function settingsupdata() {
-
-    var rgbValues = color.substring(4, color.length - 1).split(",");
-    rgbValues = rgbValues.map(function (value) {
-        return parseInt(value.trim());
+    conf_input.addEventListener("input", function () {
+        confidence_label.innerHTML = conf_input.value;
     });
 
+    let line_thickness_label = document.querySelector(".line_thickness_label");
+    let line_thickness = document.querySelector('#line_thickness');
+    let ser = document.querySelector(".ser");
+    line_thickness.addEventListener("input", function () {
+        line_thickness_label.innerHTML = line_thickness.value;
+        
+        ser.style.border = line_thickness.value + "px solid " + color
+    });
+}
 
-    let xhr = new XMLHttpRequest()
-    xhr.onreadystatechange = function () {
-        if (xhr.status === 200 && xhr.readyState === 4) {
-            // let res = JSON.parse(xhr.responseText)
-            // console.log(xhr.responseText);
 
+
+
+function SetttingsCallback(data) {
+    console.log(data);
+    
+}
+/*
+        {
+            "cmd": ""
+            "args": {
+                "DetectedItem": 
+                    [
+                        {
+                            "Label": "Gun"
+                            "Confidence": 0.55
+                            "Coordinate": [10, 20, 89, 99]
+                        },
+                        {}
+                    ]
+                
+            }
         }
-    }
-    xhr.open("get", getQueryDataUrl())
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
-    xhr.setRequestHeader("cmd", "UpdateSettings");
-    xhr.setRequestHeader("confidence", confidence_sub.value);  // 置信度
-    xhr.setRequestHeader("BoxColor", rgbValues);  //线框颜色
-    xhr.setRequestHeader("BoxLineSize", value);  //线框粗细
-    xhr.send()
+    */
 
-    console.log("设置更新");
+function SettingsUpdata() {
+    let conf_input = document.querySelector("#confidence");
+    setting_json = {};
+    setting_json["conf_threshold"] = conf_input.value
+    setting_json["iou_threshold"] = 0.55
+    SettingsUpdateCommand(setting_json, SetttingsCallback)
 };
 
 
-
+let total_day 
 
 // 统计界面  时间筛选处理
 (function () {
@@ -1274,7 +1063,7 @@ function settingsupdata() {
     //初始化 第一个时间       即为：time_start时间是 time_end的前一个月
     // 计算一个月前的日期
     var endDate = new Date(time_end.value);
-    endDate = new Date(endDate.setMonth(endDate.getMonth() - 1));
+    endDate = new Date(endDate.setMonth(endDate.getMonth() - 2));
     // 将 time_end 的 max 属性设置为一个月后的日期
     // 注意：toISOString() 返回的是 UTC 时间，可能需要根据您的时区进行调整
     endDate = endDate.toISOString().split('T')[0];
@@ -1282,21 +1071,22 @@ function settingsupdata() {
     time_start.value = endDate
 
 
-
     time_start.onchange = function () {
 
-
         change_data(time_start, "start")
-        console.log(time_start.value);
-        console.log(time_end.value);
+        // console.log(time_start.value);
+        // console.log(time_end.value);
+        total_day = new Date(time_end.value) - new Date (time_start.value)
+        console.log(new Date(total_day));
+        
 
     }
 
     time_end.onchange = function () {
 
         change_data(time_end, "end")
-        console.log(time_start.value);
-        console.log(time_end.value);
+        // console.log(time_start.value);
+        // console.log(time_end.value);
     }
 })();
 
@@ -1305,8 +1095,18 @@ function change_data(date, fla) {
     var date = new Date(date.value);  //获取传递过来的时间
     if (fla == "start") {  //如果为开始时间
         date = new Date(date.setMonth(date.getMonth() + 1));   //计算结束时间，基本为一个月
+        
+        
         date = date.toISOString().split('T')[0];
+        console.log(date);
+        
+        
+        
         time_end.value = date     //赋值给结束时间显示
+
+
+        // HistoryQueryCommand()
+
     } else {
         date = new Date(date.setMonth(date.getMonth() - 1));
         date = date.toISOString().split('T')[0];
@@ -1315,8 +1115,6 @@ function change_data(date, fla) {
 
 
 }
-
-
 
 
 
@@ -1337,12 +1135,8 @@ function echarts_1() {
         titlenum.push(0)
     }
 
-
-
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('echart1'));
-
-
 
     option = {
 
@@ -1359,11 +1153,6 @@ function echarts_1() {
             type: 'category',
             data: titlename,
             // titlename
-
-
-
-
-
             axisLabel: {
                 interval: 0,
                 // rotate:50,
@@ -1376,7 +1165,6 @@ function echarts_1() {
             },
         }],
         yAxis: [{
-
             name: "数量",
             type: 'value',
             axisLabel: {
@@ -1387,8 +1175,6 @@ function echarts_1() {
                     fontSize: '12',
                 },
             },
-
-
             splitLine: {
                 lineStyle: {
                     color: "rgba(255,255,255,.1)",
@@ -1397,11 +1183,8 @@ function echarts_1() {
         }],
         series: [
             {
-
                 type: 'bar',
-                data: titlenum,
-                // data:[123,543,756,333,23,65,8,8,76,777],
-
+                data: titlenum, // data:[123,543,756,333,23,65,8,8,76,777],
                 barWidth: '35%', //柱子宽度
                 // barGap: 1, //柱子之间间距
                 itemStyle: {
@@ -1434,7 +1217,6 @@ function echarts_1() {
 
             },
         ],
-
     };
 
     // 使用刚指定的配置项和数据显示图表。
@@ -1443,11 +1225,6 @@ function echarts_1() {
         myChart.resize();
     });
 };
-
-
-
-
-
 
 
 //统计  拼图

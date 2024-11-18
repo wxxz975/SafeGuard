@@ -29,4 +29,17 @@ namespace Networks
         }
     };
 
+
+    std::string HttpRequest::GetParams(const std::string& key) const
+    {
+        std::string result;
+        if(m_params.count(key)) result = m_params.at(key);
+
+        return result;
+    }
+    void HttpRequest::AddParams(const std::string& key, const std::string& value)
+    {
+        m_params[key] = value;
+    }
+
 } // namespace Networks

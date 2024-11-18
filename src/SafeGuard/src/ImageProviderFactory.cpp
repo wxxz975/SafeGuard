@@ -1,9 +1,9 @@
 #include "SafeGuard/ImageProviderFactory.h"
 
-#include "FileImageProvider.h"
-#include "CameraImageProvider.h"
-#include "NetworkImageProvider.h"
-#include "VideoImageProvider.h"
+#include "Providers/FileImageProvider.h"
+#include "Providers/CameraImageProvider.h"
+#include "Providers/NetworkImageProvider.h"
+#include "Providers/VideoImageProvider.h"
 
 #include "Common/Logger.h"
 

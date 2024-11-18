@@ -51,15 +51,21 @@ namespace Networks
             MG_WEBSOCKET_OPCODE_PONG = 0xa
         };
         */
-        for(auto client = m_sockClients.begin(); client != m_sockClients.end();) {
-            if(size != mg_websocket_write((*client).conn, 
-                MG_WEBSOCKET_OPCODE_TEXT, 
-                reinterpret_cast<const char*>(ptr), size)) {
-                    m_sockClients.erase(client);
-            }else {
-                client++;
-            }
+        //std::lock_guard<std::mutex> lock(m_clientsMutex); // 加锁保护
+
+        for(int idx = 0; idx < m_sockClients.size(); ++idx) {
+            mg_websocket_write(m_sockClients[idx].conn, MG_WEBSOCKET_OPCODE_TEXT, reinterpret_cast<const char*>(ptr), size);
         }
+
+        // for (auto client = m_sockClients.begin(); client != m_sockClients.end(); ) {
+        //     if (size != mg_websocket_write((*client).conn,
+        //                                 MG_WEBSOCKET_OPCODE_TEXT,
+        //                                 reinterpret_cast<const char*>(ptr), size)) {
+        //         client = m_sockClients.erase(client); // 删除并继续到下一个
+        //     } else {
+        //         ++client; // 写入成功，继续到下一个客户端
+        //     }
+        // }
     }
 
     void WebSocketHandler::WriteData(const std::string &value)

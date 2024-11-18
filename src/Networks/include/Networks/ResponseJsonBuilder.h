@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <memory>
 #include <map>
 #include <unordered_map>
 
@@ -18,7 +19,7 @@ namespace Networks
         static std::string CreateHisoryQueryResponse(bool status, const std::string& msg = "", const std::map<std::string, int>& statistic = std::map<std::string, int>());
         
         static std::string CreateNewResultMessage(const std::string& filename, 
-            const std::vector<Inference::Base::BoundingBox>& boxes, const std::vector<std::string>& labels);
+            const std::vector<Inference::Base::BoundingBox>& boxes, std::shared_ptr<std::vector<std::string>> labels);
 
 
         static std::string CreateInitResponse(const std::vector<std::string>& modelLists, 
@@ -35,6 +36,9 @@ namespace Networks
 
         static std::string CreateSettingsUpdateResponse(bool status, 
             const std::unordered_map<std::string, std::string>& values = std::unordered_map<std::string, std::string>());
+
+
+        static std::string CreateModelInfoQueryResponse(bool status, std::string& modelname, std::shared_ptr<std::vector<std::string>> labels);
     };
 } // namespace Networks
 

@@ -182,10 +182,6 @@
 								<h2 class="tith2" style="margin-top: 20px;">选中违禁物类别</h2>
 								<div class="lefttime_text" style="margin-top: 20px;">
 									<ul class='box_type' style="padding: 10px;">
-										<!-- <li>123</li>
-								<li>123</li>
-								<li>123</li>
-								<li>123</li> -->
 									</ul>
 								</div>
 							</div>
@@ -205,10 +201,6 @@
 							<div class="box_center_banner">
 								<ul>
 									<li></li>
-									<!-- <li><img src="./img/1.jpg" alt=""></li>
-								<li><img src="./img/2.jpg" alt=""></li>
-								<li><img src="./img/3.jpg" alt=""></li>
-								<li><img src="./img/4.jpg" alt=""></li> -->
 								</ul>
 							</div>
 
@@ -312,14 +304,20 @@
 										<div class="zt_on" style="background: #1a222e;"> </div>
 										<div class="zt_on" style="background: #001b46;"></div>
 									</li>
+									
 									<li></li>
+									
 									<li>
 
 										<p>线框粗细：</p>
-										<input type="range" min="1" max="10" value="5" id="range">
-										<span class="range_span" style="margin-left: 5px;">5</span>
+										<input type="range" min="1" max="10" value="5" id="line_thickness">
+										<span class="line_thickness_label" style="margin-left: 5px;">5</span>
+										<!-- <input type="range" min="1" max="10" value="5" id="range"> -->
+										<!-- <span class="range_span" style="margin-left: 5px;">5</span> -->
+										
 
 									</li>
+									
 									<li class="linear_color">
 										<p>线框颜色：</p>
 										<!-- 传  rgb颜色 -->
@@ -328,12 +326,13 @@
 										<div style="background: #24ff1c;" cl="#24ff1c;"> </div>
 										<div style="background: #eeff05;" cl="#eeff05;"></div>
 									</li>
+									
 									<li>
 
 										<p>置信度：</p>
 										<input type="range" min="0" max="1" value="0.850" step="0.001" id="confidence">
-										<span class="confidence_span" style="margin-left: 5px;">0.85</span>
-
+										<span class="confidence_label" style="margin-left: 5px;">0.85</span>
+										<!-- <span class="confidence_span" style="margin-left: 5px;">0.85</span> -->
 									</li>
 									<li></li>
 
@@ -353,7 +352,7 @@
 							<div class="tit">设置示例</div>
 							<div class="serviceForm ser_sl" style="position: relative;height: 866px;">
 								<div class="ser"
-									style="width: 209px;height: 333px;border: 1px solid red;position: absolute;top: 479px;left: 153px;">
+									style="width: 209px;height: 333px;border: 1px solid rgb(105, 95, 95);position: absolute;top: 479px;left: 153px;">
 								</div>
 								<img src="images/P02279.jpg" alt="">
 							</div>
@@ -470,11 +469,12 @@
 		</li> -->
 	</ul>
 
-
-
+	
+	<script src="js/Url.js"></script>
+	<script src="./js/Commands.js"></script>
 	<script src="./js/name_map.js"></script>
 	<script src="js/index.js"></script>
-	<script src="js/url.js"></script>
+	
 
 
 	<script>

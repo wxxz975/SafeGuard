@@ -17,6 +17,8 @@ namespace Networks
     private:
         static void GetHeaders(HttpRequest* req, const mg_request_info* reqInfo);
 
+        static void GetParams(HttpRequest *req, const std::string& query);
+
     };
     
     

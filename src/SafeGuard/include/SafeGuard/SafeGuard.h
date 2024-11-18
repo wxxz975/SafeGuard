@@ -17,6 +17,7 @@
 #include "SafeGuard/ImageProvider.h"
 #include "SafeGuard/ImageSourceManager.h"
 #include "SafeGuard/ModelSourceManager.h"
+#include "SafeGuard/INotification.h"
 
 namespace SafeGuard
 {
@@ -44,10 +45,16 @@ namespace SafeGuard
 
         bool InitImageProvider(ImageProviderType type, const std::string& params);
 
+
+    private:
+        
+
     private:
         std::unique_ptr<Networks::HttpServer> m_httpServer;
         std::unique_ptr<Inference::InferenceEngine> m_inferEngine;
         std::unique_ptr<ImageProvider> m_imageProvider; // provide all image source whatever they from
+
+        std::unique_ptr<INotification> m_notifier;
 
         ImageProviderType m_image_source_type;  
         std::shared_ptr<Common::SafeQueue<std::string>> m_image_source_queue;

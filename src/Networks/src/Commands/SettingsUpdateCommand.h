@@ -14,9 +14,7 @@ namespace Networks
 
     private:
         bool Check(float v);
+        bool FloatParse(const std::string& str, float& ret);
     };
-    
-   
-    
     
 } // namespace Networks

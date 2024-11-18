@@ -28,11 +28,13 @@ namespace Networks
         std::string GetPath() const { return m_path; };
         void SetPath(const std::string& path) { m_path = path; };
 
-
+        std::string GetParams(const std::string& key) const;
+        void AddParams(const std::string& key, const std::string& value);
     private:
         Method m_method;
         std::string m_path;
         std::map<std::string, std::string> m_headers;
+        std::map<std::string, std::string> m_params;
     };
 
 

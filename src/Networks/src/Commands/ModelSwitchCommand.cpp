@@ -14,11 +14,11 @@ namespace Networks
 {
     std::string ModelSwitchCommand::Execute(const HttpRequest &req)
     {
-        std::string model_name = req.GetHeader("ModelName");
-        std::string algorithm = req.GetHeader("Algorithm");
-        std::string framework = req.GetHeader("Framework");
+        std::string model_name = req.GetParams("ModelName");
+        std::string algorithm = req.GetParams("Algorithm");
+        std::string framework = req.GetParams("Framework");
         bool status = false;
-        std::vector<std::string> labels;
+        std::shared_ptr<std::vector<std::string>> labels;
 
         std::string model_path = Common::ServiceLocator::Get<SafeGuard::ModelSourceManager>().GetModelPath(model_name);
         if(!model_path.empty() && Inference::SupportedFrameworks::IsValid(framework) && Inference::SupportedModels::IsValid(algorithm)) {
@@ -26,6 +26,6 @@ namespace Networks
             labels = Common::ServiceLocator::Get<Inference::InferenceEngine>().GetLabels();
         }
         
-        return ResponseJsonBuilder::CreateModelSwitchResponse(status, model_name, algorithm, framework, labels);
+        return ResponseJsonBuilder::CreateModelSwitchResponse(status, model_name, algorithm, framework, *labels);
     }
 }

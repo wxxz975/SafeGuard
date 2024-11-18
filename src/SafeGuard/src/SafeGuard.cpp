@@ -1,6 +1,7 @@
 #include "SafeGuard/SafeGuard.h"
 
 #include "SafeGuard/ImageProviderFactory.h"
+#include "SafeGuard/ResultFormatter.h"
 
 #include "Networks/WebPage/FileUploadHandler.h"
 #include "Networks/WebPage/MainWebPageHandler.h"
@@ -13,9 +14,9 @@
 #include "Inference/SupportedFrameworks.h"
 #include "Inference/SupportedModels.h"
 
-#include "NetworkImageProvider.h"
+#include "Providers/NetworkImageProvider.h"
+#include "Notifications/WebSocketNotification.h"
 
-#include <iostream>
 
 namespace SafeGuard
 {
@@ -24,11 +25,9 @@ namespace SafeGuard
     {
         m_image_source_queue = std::make_shared<Common::SafeQueue<std::string>>();
         m_detection_result_queue = std::make_shared<Common::SafeQueue<Inference::Base::OutputBoxes>>();
-        
+        m_notifier = std::make_unique<WebSocketNotification>();
         m_image_source_mgr = std::make_unique<ImageSourceManager>();
         Common::ServiceLocator::Provide(*m_image_source_mgr);
-
-        
         
         m_config = std::make_shared<SafeGuardConfig>();
         if(!m_config->LoadConfig(config_path) || !m_config->IsValidConfig()) {
@@ -41,8 +40,14 @@ namespace SafeGuard
         Common::ServiceLocator::Provide(*m_model_source_mgr);
 
         m_image_source_type = static_cast<ImageProviderType>(m_config->infer.image_source_type);
+
         if(!InitImageProvider(m_image_source_type, m_config->infer.image_source)) {
             Common::logError("Failed to init image provider!");
+            return false;
+        }
+
+        if(!InitNetwork(m_config->net.root_doc, m_config->net.listen_port)) {
+            Common::logError("Failed to init network service!");
             return false;
         }
         
@@ -51,10 +56,7 @@ namespace SafeGuard
             return false;
         }
 
-        if(!InitNetwork(m_config->net.root_doc, m_config->net.listen_port)) {
-            Common::logError("Failed to init network service!");
-            return false;
-        }
+       
         
         return true;
     }
@@ -64,22 +66,16 @@ namespace SafeGuard
         using namespace Common::IFilesystem;
         std::string save_dir = m_config->image_cache_dir;
         while(true) {
-            
+            std::this_thread::sleep_for(std::chrono::milliseconds(m_config->loop_Interval));
             auto imageInfo = m_imageProvider->NextImage();
             auto img = imageInfo.second;
             std::string filename = imageInfo.first;
             if(!img.empty()) {
                 auto boxes = m_inferEngine->Infer(img); // beceuse set the callback, don`t need received the return value
-                std::string filepath = m_image_source_mgr->GetImagePath(filename);
 
-                std::string save_path = ConcatPath(save_dir, "rendered_" + filename);
-                // Common::logInfo("[render] filename:{}, filepath:{}, save_path:{}", filename, filepath, save_path);
-                m_inferEngine->RenderBoxes(filepath, boxes, save_path);
-
-                // fixme : send the result to web, use web socket
+                m_inferEngine->RenderBoxes(img, boxes, ConcatPath(save_dir, filename));
+                m_notifier->Notify(filename, boxes, m_inferEngine->GetLabels());
             }
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(m_config->loop_Interval));
         }
     }
 
@@ -103,12 +99,12 @@ namespace SafeGuard
             m_httpServer->AddPageHandler("/upload", std::move(fileUploadHandler));
 
             auto mainPageHandler = std::make_unique<Networks::MainWebPageHandler>();
+            Common::ServiceLocator::Provide(*m_httpServer);
             m_httpServer->AddPageHandler("/main", std::move(mainPageHandler));
             
             auto websockHandler = std::make_unique<Networks::WebSocketHandler>();
+            Common::ServiceLocator::Provide(*websockHandler);
             m_httpServer->AddSocketHandler("/ws", std::move(websockHandler));
-
-            Common::ServiceLocator::Provide(*m_httpServer);
 
             Common::logInfo("http service start at: http://127.0.0.1:{}, root doc:{}", listen_port, config["document_root"]);
             return true;
@@ -126,6 +122,8 @@ namespace SafeGuard
                 m_detection_result_queue->Put(boxes);
             });
             Common::ServiceLocator::Provide(*m_inferEngine);
+
+            Common::logInfo("Initialized Algorithms:{}, inference framework:{}, Model:{}", model_type, framework, model_path);
             return true;
         }
 
@@ -146,7 +144,8 @@ namespace SafeGuard
     bool SafeGuard::InitImageProvider(ImageProviderType type, const std::string& params)
     {
         using namespace Common::IFilesystem;
-        
+        bool status = true;
+
         m_imageProvider = ImageProviderFactory::CreateProvider(type, params);
 
         m_imageProvider->SetNextImageCallback([&](const std::string& filename, const std::string& filepath){
@@ -158,11 +157,13 @@ namespace SafeGuard
         {
             if(auto ptr = dynamic_cast<NetworkImageProvider*>(m_imageProvider.get()))
             {
-                return ptr->Initialize(m_image_source_queue);
+                status = ptr->Initialize(m_image_source_queue);
             }
         }
 
-        return true;
+        Common::logInfo("");
+
+        return status;
     }
 
 } //
