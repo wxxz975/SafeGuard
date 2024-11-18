@@ -34,12 +34,12 @@ namespace Inference
                 num_channels = shape.at(1);
                 num_anchors = shape.at(2);
                 outShape = cv::Size(num_anchors, num_channels);
-                Common::logInfo("use new shape\n");
+                Common::logInfo("use new shape");
             }else {
                 num_channels = shape.at(2);
                 num_anchors = shape.at(1);
                 outShape = cv::Size(num_channels, num_anchors);
-                Common::logInfo("use old shape\n");
+                Common::logInfo("use old shape");
             }
             
             output0 = cv::Mat(outShape, CV_32F, raw_ptr);
@@ -59,11 +59,6 @@ namespace Inference
                 
                 if (score > ic->conf_threshold)
                 {
-                    // TODO: old version something error in output
-                    if(score * bbox->box_conf > ic->conf_threshold) {
-                        // Common::zlog("objConf:%f, boxConf:%f\n", (float)score, bbox->box_conf);
-                    }
-                    
                     std::int32_t width = static_cast<std::int32_t>(bbox->w);
                     std::int32_t height = static_cast<std::int32_t>(bbox->h);
                     std::int32_t left = static_cast<std::int32_t>(bbox->cx) - width / 2;
@@ -94,7 +89,7 @@ namespace Inference
                 auto shape = VecToStr(model_output_shape);
                 auto shapeNew = VecToStr(m_theoryOutShape_new);
                 auto shapeOld = VecToStr(m_theoryOutShape_old);
-                Common::logError("OutputShape:{}, imcompatiable with ShapeNew:{} or ShapeOld:{}\n", 
+                Common::logError("OutputShape:{}, imcompatiable with ShapeNew:{} or ShapeOld:{}", 
                     shape, shapeNew, shapeOld);
             }
 

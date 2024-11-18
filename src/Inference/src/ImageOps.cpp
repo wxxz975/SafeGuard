@@ -171,21 +171,21 @@ namespace Inference
         }
 
         cv::Mat RenderBoundingBoxes(const cv::Mat& image, const std::vector<Base::BoundingBox>& boxes,
-            const std::vector<std::string>& labels)
+            const std::shared_ptr<std::vector<std::string>>& labels)
         {
             cv::Mat out = image.clone();
             for (const auto& box : boxes) {
                 cv::rectangle(out, cv::Rect(box.left, box.top, box.width, box.height), cv::Scalar(0, 0, 255), 2); // 绘制绿色边界框，线宽为2
 
                 cv::Point labelPosition(box.left, box.top - 10); 
-                std::string label = labels.empty() ? std::to_string(box.class_index) : labels[box.class_index];
+                std::string label = labels ? std::to_string(box.class_index) : labels->at(box.class_index);
                 cv::putText(out, label, labelPosition, cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0, 255, 0), 1);
             }
             return out;
         }
 
         cv::Mat RenderBoundingBoxes(const std::string& img_path, const std::vector<Base::BoundingBox>& boxes,
-            const std::vector<std::string>& labels)
+            const std::shared_ptr<std::vector<std::string>>& labels)
         {
             auto img = cv::imread(img_path);   
             return RenderBoundingBoxes(img, boxes, labels);

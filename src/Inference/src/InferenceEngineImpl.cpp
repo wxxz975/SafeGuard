@@ -8,6 +8,7 @@
 #include "Common/Logger.h"
 #include "Common/IFilesystem.h"
 
+#include <stdio.h>
 namespace Inference
 {
     
@@ -43,6 +44,7 @@ namespace Inference
     Base::OutputBoxes InferenceEngineImpl::Infer(const cv::Mat &img)
     {
         InferenceContextPtr ctx = std::make_shared<InferenceContext>(m_iou_default, m_conf_default);
+        
         auto inputs = m_prepos->Preprocessing(img, ctx);
         auto outputs = m_framework->Infer(inputs);
         auto boxes = m_prepos->Postprocessing(outputs, ctx);
@@ -97,12 +99,21 @@ namespace Inference
         cv::imwrite(save_path, rendered);
     }
 
-    const std::vector<std::string> &InferenceEngineImpl::GetLabels() const
+    std::shared_ptr<std::vector<std::string>> InferenceEngineImpl::GetLabels() const
     {
         if(m_metadata) {
             return m_metadata->labels;
         }
-        return std::vector<std::string>();
+        return nullptr;
+    }
+
+    std::shared_ptr<Base::ModelMetadata> InferenceEngineImpl::ParseModel(const std::string& path) const
+    {
+        std::shared_ptr<Base::ModelMetadata> metadata = nullptr;
+        if(m_framework) {
+            metadata = m_framework->ParseModel(path);
+        }
+        return metadata;
     }
 
     void InferenceEngineImpl::SetIOUThreshold(float iou)
@@ -151,9 +162,8 @@ namespace Inference
             Common::logError("Failed to initialize the framework!");
             return false;
         }
+        m_metadata = m_framework->GetMetadata();
 
-        m_metadata = m_framework->ParseModel(model_path);
-        
         if(!m_prepos->Initialize(m_metadata)) {
             Common::logError("Failed to initialize the algo propostprocessor!");
             return false;

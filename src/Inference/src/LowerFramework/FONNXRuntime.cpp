@@ -1,6 +1,7 @@
 #include "LowerFramework/FONNXRuntime.h"
 
 #include "Common/Utils.h"
+#include "Common/Logger.h"
 
 namespace Inference
 {
@@ -49,7 +50,7 @@ namespace Inference
             }
             catch(const std::exception& e)
             {
-                // Common::zlog("Failed Init ONNXRuntime:%s\n", e.what());
+                Common::logError("Failed Init ONNXRuntime:{}", e.what());
                 return false;
             }
 
@@ -79,9 +80,16 @@ namespace Inference
         std::shared_ptr<Base::ModelMetadata> FONNXRuntime::ParseModel(const std::string &model_path)
         {
             Ort::AllocatorWithDefaultOptions allocator;
-            m_metadata = std::make_shared<Base::ModelMetadata>();
-            auto inputCnt = m_ort_session->GetInputCount();
-            auto outputCnt = m_ort_session->GetOutputCount();
+            std::shared_ptr<Ort::Session> session;
+            if(!model_path.empty()) {
+                auto env = std::make_shared<Ort::Env>(OrtLoggingLevel::ORT_LOGGING_LEVEL_WARNING, model_path.c_str());
+                Ort::SessionOptions session_opt;
+                session = std::make_shared<Ort::Session>(*env, model_path.c_str(), session_opt);
+            }else session = m_ort_session;
+
+            auto metadata = std::make_shared<Base::ModelMetadata>();
+            auto inputCnt = session->GetInputCount();
+            auto outputCnt = session->GetOutputCount();
 
             auto GetIOInfo = [&](const std::string& name, const Ort::TypeInfo& typeInfo, std::vector<Base::IOInfo>& result) {
                 auto typeAndShape = typeInfo.GetTensorTypeAndShapeInfo();
@@ -93,18 +101,18 @@ namespace Inference
             };
 
             for(std::size_t idx = 0; idx < inputCnt; ++idx) {
-                auto name = m_ort_session->GetInputNameAllocated(idx, allocator);
-                auto TypeInfo = m_ort_session->GetInputTypeInfo(idx);
-                GetIOInfo(name.get(), TypeInfo, m_metadata->inputs);
+                auto name = session->GetInputNameAllocated(idx, allocator);
+                auto TypeInfo = session->GetInputTypeInfo(idx);
+                GetIOInfo(name.get(), TypeInfo, metadata->inputs);
             }
             for(std::size_t idx = 0; idx < outputCnt; ++idx) {
-                auto name = m_ort_session->GetOutputNameAllocated(idx, allocator);
-                auto TypeInfo = m_ort_session->GetOutputTypeInfo(idx);
-                GetIOInfo(name.get(), TypeInfo, m_metadata->outputs);
+                auto name = session->GetOutputNameAllocated(idx, allocator);
+                auto TypeInfo = session->GetOutputTypeInfo(idx);
+                GetIOInfo(name.get(), TypeInfo, metadata->outputs);
             }
 
             // find labels 
-            auto ort_metaData = m_ort_session->GetModelMetadata();
+            auto ort_metaData = session->GetModelMetadata();
             auto keys = ort_metaData.GetCustomMetadataMapKeysAllocated(allocator);
             const std::string label_name = "names";
             for(const auto& key : keys) {
@@ -113,11 +121,11 @@ namespace Inference
 
                 auto labelsRaw = ort_metaData.LookupCustomMetadataMapAllocated(label_name.c_str(), allocator);
                 std::string rawjson = std::string(labelsRaw.get());
-                m_metadata->labels = Common::ParseJsonRaw(rawjson);
+                metadata->labels = Common::ParseJsonRaw(rawjson);
 			    break;
             }
 
-            return m_metadata;     
+            return metadata;     
         }
 
         std::vector<Ort::Value> FONNXRuntime::CreateTensor(const std::vector<Base::TensorPtr> &tensors)
@@ -190,7 +198,7 @@ namespace Inference
         {
             std::vector<Base::TensorPtr> result;
             
-            for(std::size_t idx = 0; idx < m_metadata->outputs.size(); ++idx) {
+            for(std::size_t idx = 0; idx < m_metadata->GetOutputCount(); ++idx) {
                 const auto& value = output_tensor[idx];
                 auto begin = value.GetTensorData<std::uint8_t>();
                 auto typeAndShape = value.GetTensorTypeAndShapeInfo();

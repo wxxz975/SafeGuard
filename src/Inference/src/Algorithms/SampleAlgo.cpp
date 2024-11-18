@@ -15,7 +15,7 @@ namespace Inference
             m_metadata = metadata;
             
             if(!CheckIOShape()) {
-                Common::logError("Error on Input and output shapes do not match\n");
+                Common::logError("Error on Input and output shapes do not match");
                 return false;
             }
 
@@ -24,13 +24,13 @@ namespace Inference
 
         cv::Mat SampleAlgo::RenderBoxes(const std::vector<Base::BoundingBox> &boxes, const std::string &image_path)
         {
-            const auto&labels =  m_metadata ? m_metadata->labels : std::vector<std::string>();
+            const auto&labels =  m_metadata ? m_metadata->labels : nullptr;
             return RenderBoundingBoxes(image_path, boxes, labels);
         }
 
         cv::Mat SampleAlgo::RenderBoxes(const std::vector<Base::BoundingBox> &boxes, const cv::Mat &image)
         {
-            const auto&labels =  m_metadata ? m_metadata->labels : std::vector<std::string>();
+            const auto&labels =  m_metadata ? m_metadata->labels : nullptr;
             return RenderBoundingBoxes(image, boxes, labels);
         }
         bool SampleAlgo::CheckIOShape()
@@ -51,7 +51,7 @@ namespace Inference
                     if(!CompareVecWithMask(mask, shape, model_shape)) {
                         auto shape1 = VecToStr(shape);
                         auto shape2 = VecToStr(model_shape);
-                        // Common::zlog("Shape:%s imcompatiable with:%s\n", shape1.c_str(), shape2.c_str());
+                        Common::logError("Shape:{} imcompatiable with:{}", shape1, shape2);
                         return false;
                     }
                         

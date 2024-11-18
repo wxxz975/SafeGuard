@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <vector>
 #include <ostream>
+#include <sstream>
 #include <functional>
 
 namespace Inference
@@ -27,6 +28,13 @@ namespace Inference
                 left(left), top(top), width(width), height(height),
                 confidence(confidence), class_index(class_index)
             {
+            };
+            std::string CoordsToString()
+            {
+                std::stringstream ss;
+                ss << "[" << left << "," << top << "," << width << "," << height << "]";
+
+                return ss.str();
             };
         };
 

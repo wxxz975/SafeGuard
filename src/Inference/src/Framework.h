@@ -35,6 +35,8 @@ namespace Inference
         /// @param model_path 模型的路径
         /// @return 
         std::shared_ptr<Base::ModelMetadata> ParseModel(const std::string& model_path = "");
+
+        std::shared_ptr<Base::ModelMetadata> GetMetadata();
     };
     
     

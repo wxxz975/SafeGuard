@@ -43,8 +43,6 @@ namespace Inference
             ov::CompiledModel m_ov_compiled_model;
             ov::InferRequest m_ov_infer_request;
 
-            std::shared_ptr<Base::ModelMetadata> m_metadata;
-        
             static std::unordered_map<Base::Type_t, ov::element::Type_t> m_type2ovType;
             static std::unordered_map<ov::element::Type_t, Base::Type_t> m_ovType2type;
         };

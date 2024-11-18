@@ -50,8 +50,6 @@ namespace Inference
             std::wstring m_env_namew;
             
 
-            std::shared_ptr<Base::ModelMetadata> m_metadata;
-
             static std::unordered_map<Base::Type_t, ONNXTensorElementDataType> m_type2ortType;
             static std::unordered_map<ONNXTensorElementDataType, Base::Type_t> m_ortType2type;
         };

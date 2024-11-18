@@ -6,7 +6,7 @@
 #include <opencv2/opencv.hpp>
 
 #include "Inference/Base/BoundingBox.h"
-
+#include "Inference/Base/ModelMetadata.h"
 
 namespace Inference
 {
@@ -28,7 +28,7 @@ namespace Inference
         InferenceEngine() = default;
         ~InferenceEngine();
 
-        const CurrentState& GetState();
+        const CurrentState& GetState() const; 
      
         bool Initialize(const std::string& model_path, const std::string& algo_type, const std::string& infer_framework, size_t threadNum = 4);
 
@@ -43,7 +43,9 @@ namespace Inference
 
         void InferAsyn(const std::string& img_path, const Base::AsynInferCallback& callback);
 
-        const std::vector<std::string>& GetLabels() const;
+        std::shared_ptr<std::vector<std::string>> GetLabels() const;
+
+        std::shared_ptr<Base::ModelMetadata> ParseModel(const std::string& path) const;
 
         void SetConfidenceThreshold(float conf);
 

@@ -33,7 +33,9 @@ namespace Inference
         void RenderBoxes(const std::string &img_path, const Base::OutputBoxes& boxes, const std::string& save_path);
         void RenderBoxes(const cv::Mat &img, const Base::OutputBoxes& boxes, const std::string& save_path);
 
-        const std::vector<std::string>& GetLabels() const;
+       std::shared_ptr<std::vector<std::string>> GetLabels() const;
+       std::shared_ptr<Base::ModelMetadata> ParseModel(const std::string& path) const;
+
 
         void SetIOUThreshold(float iou);
         void SetConfidenceThreshold(float conf);

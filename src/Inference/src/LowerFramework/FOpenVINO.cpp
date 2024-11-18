@@ -1,6 +1,7 @@
 #include "LowerFramework/FOpenVINO.h"
 
 #include "Common/Utils.h"
+#include "Common/Logger.h"
 
 #include "Inference/Base/ModelMetadata.h"
 
@@ -35,7 +36,7 @@ namespace Inference
             }
             catch(const std::exception& e)
             {
-                std::cerr << e.what() << '\n';
+                Common::logError("OpenVINO Initialize failed:{}", e.what());
                 return false;
             }
             return true;
@@ -52,7 +53,7 @@ namespace Inference
 
         std::shared_ptr<Base::ModelMetadata> FOpenVINO::ParseModel(const std::string &model_path)
         {
-            m_metadata = std::make_shared<Base::ModelMetadata>();
+            auto metadata = std::make_shared<Base::ModelMetadata>();
 
             std::shared_ptr<ov::Model> model;
             if(!model_path.empty()) {
@@ -60,7 +61,6 @@ namespace Inference
                 model = ov_core.read_model(model_path);
             }
             else model = m_ov_model;
-            
             
             // 获取 shape type, name
             auto inputs = model->inputs();
@@ -77,24 +77,22 @@ namespace Inference
 
                 return result;
             };
-            m_metadata->inputs = getIOInfo(inputs);
-            m_metadata->outputs = getIOInfo(outputs);
+            metadata->inputs = getIOInfo(inputs);
+            metadata->outputs = getIOInfo(outputs);
 
 
             /// 获取这个标签
-            std::vector<std::string> labels;
+           
             auto rtInfo = model->get_rt_info();
             if(rtInfo.count("framework")) {
                 auto framework = rtInfo["framework"].as<ov::AnyMap>();
                 if(framework.count("names")) {
                     auto names =  framework["names"].as<std::string>();
-                    labels = Common::ParseJsonRaw(names);
+                    metadata->labels = Common::ParseJsonRaw(names);
                 }
             }
-            m_metadata->labels = std::move(labels);
 
-
-            return m_metadata;
+            return metadata;
         }
 
         void FOpenVINO::MapType()

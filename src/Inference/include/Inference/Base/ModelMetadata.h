@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <memory>
 #include "ElementType.h"
 
 
@@ -50,7 +51,7 @@ namespace Inference
             std::unordered_map<std::string, std::string> properties;
 
             // 模型中的标签，可能存在携带
-            std::vector<std::string> labels;
+            std::shared_ptr<std::vector<std::string>> labels;
 
             size_t GetInputCount() const { return inputs.size(); };
             size_t GetOutputCount() const { return outputs.size(); };

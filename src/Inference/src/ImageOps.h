@@ -38,10 +38,10 @@ namespace Inference
 
 
         cv::Mat RenderBoundingBoxes(const cv::Mat& image, const std::vector<Base::BoundingBox>& boxes,
-            const std::vector<std::string>& labels = std::vector<std::string>());
+            const std::shared_ptr<std::vector<std::string>>& labels);
 
         cv::Mat RenderBoundingBoxes(const std::string& img_path, const std::vector<Base::BoundingBox>& boxes,
-            const std::vector<std::string>& labels = std::vector<std::string>());
+            const std::shared_ptr<std::vector<std::string>>& labels);
 
 
         cv::Size ConvertToCVSize(const Base::ImageSize& size);

@@ -12,7 +12,7 @@ namespace Inference
             m_impl = nullptr;
         }
     }
-    const InferenceEngine::CurrentState& InferenceEngine::GetState()
+    const InferenceEngine::CurrentState& InferenceEngine::GetState() const
     {
         return m_state;
     }
@@ -66,10 +66,15 @@ namespace Inference
         cv::Mat rendered = m_impl->RenderBoxes(img, boxes);
         cv::imwrite(save_path, rendered);
     }
-    const std::vector<std::string> &InferenceEngine::GetLabels() const
+    std::shared_ptr<std::vector<std::string>> InferenceEngine::GetLabels() const
     {
         assert(m_state.initialized);
         return m_impl->GetLabels();
+    }
+
+    std::shared_ptr<Base::ModelMetadata> InferenceEngine::ParseModel(const std::string& path) const
+    {
+        return m_impl->ParseModel(path);
     }
 
     void InferenceEngine::SetConfidenceThreshold(float conf)
