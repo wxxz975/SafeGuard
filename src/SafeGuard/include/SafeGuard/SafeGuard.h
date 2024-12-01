@@ -6,6 +6,7 @@
 
 
 #include "Networks/HttpServer.h"
+#include "Networks/Broadcaster.h"
 #include "Inference/InferenceEngine.h"
 
 #include "Common/SafeQueue.h"
@@ -18,6 +19,7 @@
 #include "SafeGuard/ImageSourceManager.h"
 #include "SafeGuard/ModelSourceManager.h"
 #include "SafeGuard/INotification.h"
+
 
 namespace SafeGuard
 {
@@ -45,11 +47,8 @@ namespace SafeGuard
 
         bool InitImageProvider(ImageProviderType type, const std::string& params);
 
-
     private:
-        
-
-    private:
+        std::unique_ptr<Networks::Broadcaster> m_broadcaster;
         std::unique_ptr<Networks::HttpServer> m_httpServer;
         std::unique_ptr<Inference::InferenceEngine> m_inferEngine;
         std::unique_ptr<ImageProvider> m_imageProvider; // provide all image source whatever they from
@@ -62,9 +61,8 @@ namespace SafeGuard
         std::unique_ptr<ImageSourceManager> m_image_source_mgr; // provide the image path for the web 
         std::unique_ptr<ModelSourceManager> m_model_source_mgr;
 
-        // typedef std::pair<Inference::Base::OutputBoxes> DetectionRecord;
+        
         std::shared_ptr<Common::SafeQueue<Inference::Base::OutputBoxes>> m_detection_result_queue;
-        //std::shared_ptr<Common::SafeQueue<Inference::Base::BoundingBox>>
 
         Config m_config;
 

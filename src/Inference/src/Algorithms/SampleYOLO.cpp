@@ -1,5 +1,6 @@
 #include "Algorithms/SampleYOLO.h"
 #include "ImageOps.h"
+#include "Matrix.hpp"
 
 namespace Inference
 {
@@ -56,5 +57,9 @@ namespace Inference
         
             return result;
         }
+
     } // namespace Algorithms
+
+    
+   
 } // namespace Inference

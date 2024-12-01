@@ -3,11 +3,11 @@
 
 namespace Inference
 {
-    cv::Mat Letterbox(const cv::Mat& image, 
-        const cv::Size& newShape, 
-        const cv::Scalar& color, 
-        bool scaleFill, bool scaleUp, 
-        int stride)
+        cv::Mat Letterbox(const cv::Mat& image, 
+            const cv::Size& newShape, 
+            const cv::Scalar& color, 
+            bool scaleFill, bool scaleUp, 
+            int stride)
         {
             cv::Mat outImage;
             cv::Size shape = image.size();
@@ -51,12 +51,14 @@ namespace Inference
 
         void RestoreOriginalCoordinates(const cv::Size &currentShape, const cv::Size &originalShape, Base::BoundingBox &bbox)
         {
-            float gain = std::min(static_cast<float>(currentShape.height) / static_cast<float>(originalShape.height),
-            static_cast<float>(currentShape.width) / static_cast<float>(originalShape.width));
+            float gain = std::min(
+                static_cast<float>(currentShape.height) / static_cast<float>(originalShape.height),
+                static_cast<float>(currentShape.width) / static_cast<float>(originalShape.width)
+            );
 
             int pad[2] = {
-            static_cast<int>((static_cast<float>(currentShape.width) - static_cast<float>(originalShape.width) * gain) / 2.0f),
-            static_cast<int>((static_cast<float>(currentShape.height) - static_cast<float>(originalShape.height) * gain) / 2.0f)
+                static_cast<int>((static_cast<float>(currentShape.width) - static_cast<float>(originalShape.width) * gain) / 2.0f),
+                static_cast<int>((static_cast<float>(currentShape.height) - static_cast<float>(originalShape.height) * gain) / 2.0f)
             };
 
             bbox.left = static_cast<int>(std::round((static_cast<float>(bbox.left - pad[0]) / gain)));
@@ -178,7 +180,7 @@ namespace Inference
                 cv::rectangle(out, cv::Rect(box.left, box.top, box.width, box.height), cv::Scalar(0, 0, 255), 2); // 绘制绿色边界框，线宽为2
 
                 cv::Point labelPosition(box.left, box.top - 10); 
-                std::string label = labels ? std::to_string(box.class_index) : labels->at(box.class_index);
+                std::string label = labels && box.class_index < labels->size() ? labels->at(box.class_index) : std::to_string(box.class_index);
                 cv::putText(out, label, labelPosition, cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0, 255, 0), 1);
             }
             return out;

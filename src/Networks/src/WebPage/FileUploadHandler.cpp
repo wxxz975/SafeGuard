@@ -93,7 +93,9 @@ namespace Networks
     bool FileUploadHandler::IsUploadRequest(mg_connection *conn)
     {
         const struct mg_request_info *req_info = mg_get_request_info(conn);
-        std::string content_type = mg_get_header(conn, "Content-Type");
+        auto ct = mg_get_header(conn, "Content-Type");
+        if(ct == nullptr) return false;
+        std::string content_type =  ct;
         return !content_type.empty() && content_type.find("multipart/form-data") != std::string::npos;
     }
 

@@ -11,6 +11,9 @@ namespace Inference
         YOLOv3 = 0,
         YOLOv5,
         YOLOv8,
+        YOLOv9,
+        YOLOv10,
+        YOLOv11,
         RTDetr,
         ALGO_MAX
     };

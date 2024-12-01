@@ -12,8 +12,8 @@
         "model_type":       "YOLOv8",                                                   // YOLOv3|YOLOv5|YOLOv8|RTDetr
         "framework":        "OpenVINO",                                                 // OpenVINO|ONNXRuntime|TensorRT
 
-        "infer_source_type": 2,     // 0=image file or image dir|1=video file|2=network|3=camera
-        "infer_source":      ""     //  only if the infer_source_type = 0 or 1 enable, represent the source path
+        "image_source_type": 2,     // 0=image file or image dir|1=video file|2=network|3=camera
+        "image_source":      ""     //  only if the infer_source_type = 0 or 1 enable, represent the source path
     },
     "Networks": {
         "root_doc":     "../frontends",         // relative path to current executable

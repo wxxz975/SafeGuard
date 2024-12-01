@@ -6,18 +6,18 @@
     "loop_Interval": 2000,
     "image_cache_dir": "image_cache", 
     "Inference": {
-        "iou_threshold":    0.5,
+        "iou_threshold":    0.6,
         "conf_threshold":    0.55,
 
-        "model_path":       "/home/wxxz/workspace/weights/yolov8-sixray.onnx",         
-        "model_type":       "YOLOv8",                                                   
+        "model_path":       "/home/wxxz/workspace/weights/COCO/YOLOv10/yolov10n.onnx",         
+        "model_type":       "YOLOv10",                                                   
         "framework":        "OpenVINO",                                                 
 
         "image_source_type": 0,     
-        "image_source":      "/home/wxxz/workspace/datasets/xray"     
+        "image_source":      "/home/wxxz/workspace/datasets/coco128/images/train2017"     
     },
     "Networks": {
-        "root_doc":     "../frontends",         
+        "root_doc":     "/home/wxxz/workspace/SafeGuardFrontend",         
         "listen_port":  8080
     }
 }

@@ -4,7 +4,9 @@ set(targetname libnetworks)
 
 set(curdir ${PROJECT_SOURCE_DIR})
 
-#find_package(civetweb REQUIRED)
+find_package(Boost REQUIRED)
+
+
 add_subdirectory(src/civetweb)
 
 
@@ -25,6 +27,10 @@ target_include_directories(
     ${curdir}/include
     ${curdir}/src
 )
+target_include_directories(
+    ${targetname} PRIVATE
+    ${Boost_INCLUDE_DIRS}
+)
 
 
 target_link_libraries(
@@ -33,6 +39,7 @@ target_link_libraries(
     libsafeguard
     libcommon
     ${CIVETWEB_LIB}
+    ${Boost_LIBRARIES}
 )
 
 

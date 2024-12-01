@@ -8,6 +8,9 @@ namespace Inference
         {"YOLOv3", AlgorithmsType::YOLOv3},
         {"YOLOv5", AlgorithmsType::YOLOv5},
         {"YOLOv8", AlgorithmsType::YOLOv8},
+        {"YOLOv9", AlgorithmsType::YOLOv9},
+        {"YOLOv10", AlgorithmsType::YOLOv10},
+        {"YOLOv11", AlgorithmsType::YOLOv11},
         {"RTDetr", AlgorithmsType::RTDetr}
     };
     

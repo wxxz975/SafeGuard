@@ -24,6 +24,7 @@ namespace Common
         return { maxIndex, maxValue };
     }
 
+
     std::shared_ptr<std::vector<std::string>> ParseJsonRaw(const std::string &raw_json)
     {
         std::shared_ptr<std::vector<std::string>> labels = std::make_shared<std::vector<std::string>>();

@@ -23,6 +23,7 @@ namespace SafeGuard
     
     bool SafeGuard::Initialize(const std::string& config_path)
     {
+        m_broadcaster = std::make_unique<Networks::Broadcaster>();
         m_image_source_queue = std::make_shared<Common::SafeQueue<std::string>>();
         m_detection_result_queue = std::make_shared<Common::SafeQueue<Inference::Base::OutputBoxes>>();
         m_notifier = std::make_unique<WebSocketNotification>();
@@ -34,6 +35,7 @@ namespace SafeGuard
             Common::logError("Failed to load config or config Invalid!");
             return false;
         }
+        m_broadcaster->Initialize(m_config->net.listen_port, "/upload");
         
         m_model_source_mgr = std::make_unique<ModelSourceManager>();
         m_model_source_mgr->Initialize(m_config->infer.model_path);

@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-#include "SampleYOLO.h"
+#include "Algorithms/SampleYOLO.h"
 
 namespace Inference
 {
@@ -33,6 +33,7 @@ namespace Inference
 
         private:
             virtual std::vector<Base::BoundingBox> ParseRawOutput(const std::vector<Base::TensorPtr>& outputs, std::shared_ptr<InferenceContext> ic) override;
+
 
             virtual bool CheckIOShape() override;
         

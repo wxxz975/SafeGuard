@@ -13,9 +13,8 @@
 
 namespace Networks
 {
-#define NewTaskQuery        "QueryResult"
-#define InitQuery           "Init"
-#define ModelSwitchQuery    "SwitchModel"
+#define InitQuery           "QueryInit"
+#define ModelSwitchQuery    "QuerySwitchModel"
 #define SettingsUpdateQuery "UpdateSettings"
 #define HistoryQuery        "QueryHistory"
 #define ImageQuery          "QueryImage"
@@ -35,12 +34,15 @@ namespace Networks
     {
         HttpRequest req = HttpRequestParser::ParseRequest(conn);
 
-        std::string cmd = req.GetHeader("cmd");
+        std::string cmd = req.GetHeader("CMD");
+        Common::Logger::logInfo("Recivied CMD:{}", cmd);
         if(m_cmds.count(cmd)) {
             std::string result = m_cmds.at(cmd)->Execute(req);
-            Common::Logger::logInfo("send:{}", result);
             if(cmd == ImageQuery) {
-                if(!result.empty()) resp->SetFileResponse(result);
+                if(!result.empty()) {
+                    resp->SetFileResponse(result);
+                    Common::Logger::logInfo("ImageQuery: {}", result);
+                }
                 else resp->SetUnknownErrorResponse("Unknown File!");
             }   
             else resp->SetJsonResponse(result);

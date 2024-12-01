@@ -44,11 +44,11 @@ namespace Networks
         doc["CMD"] = "NewResultMessage";
         doc["Args"]["Filename"] = filename;
         
-        auto& items = doc["Args"]["DetectedItem"];
+        auto& items = doc["Args"]["DetectedItems"];
         for(int idx = 0; idx < boxes.size(); ++idx) {
             int label_idx = boxes[idx].class_index;
             std::array<int, 4> coord = {boxes[idx].left, boxes[idx].top, boxes[idx].width, boxes[idx].height};
-            items[idx]["Label"] = labels->at(label_idx);
+            items[idx]["Label"] = label_idx < labels->size() ? labels->at(label_idx) : "";
             items[idx]["Confidence"] = boxes[idx].confidence;
             items[idx]["Coordinate"] = coord;
         }
@@ -66,7 +66,7 @@ namespace Networks
         doc["CMD"] = "InitResponse";
         
         doc["Args"]["ModelNames"] = modelLists;
-        doc["Args"]["Framworks"] = frameworkLists;
+        doc["Args"]["Frameworks"] = frameworkLists;
         doc["Args"]["Algorithms"] = algorithmLists;
         doc["Args"]["CurrentModelIndex"] = curModelIdx;
         doc["Args"]["CurrentFrameworkIndex"] = curFrameworkIdx;

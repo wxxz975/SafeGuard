@@ -1,5 +1,5 @@
 #pragma once
-#include "SampleYOLO.h"
+#include "Algorithms/SampleYOLO.h"
 
 namespace Inference
 {

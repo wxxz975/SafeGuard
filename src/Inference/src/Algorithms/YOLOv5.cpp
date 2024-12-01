@@ -1,6 +1,7 @@
 #include "Algorithms/YOLOv5.h"
 #include "Common/Utils.h"
 #include "Common/Logger.h"
+#include "Matrix.hpp"
 
 namespace Inference
 {
@@ -23,57 +24,63 @@ namespace Inference
 
             std::size_t num_channels = 0;
             std::size_t num_anchors = 0;
+            size_t iterations = 0;
 
-            cv::Size outShape;
-            cv::Mat output0;
             /*
                 old shape: [1,25200,85] ,
                 new shape: [1, 85, 8400], 
             */
             if(m_useNewOutputShape) {
-                num_channels = shape.at(1);
-                num_anchors = shape.at(2);
-                outShape = cv::Size(num_anchors, num_channels);
-                Common::logInfo("use new shape");
+                num_channels = shape.at(1); // 85
+                num_anchors = shape.at(2);  // 8400
+                iterations = num_channels;
             }else {
-                num_channels = shape.at(2);
-                num_anchors = shape.at(1);
-                outShape = cv::Size(num_channels, num_anchors);
-                Common::logInfo("use old shape");
+                num_channels = shape.at(2); // 85
+                num_anchors = shape.at(1);  // 25200
+                iterations = num_anchors;
             }
-            
-            output0 = cv::Mat(outShape, CV_32F, raw_ptr);
-            if(m_useNewOutputShape) output0 = output0.t();
+            // num_channels = shape.at(1);
+            // num_anchors = shape.at(2);
+            // iterations = m_useNewOutputShape ? num_anchors : num_channels;
 
-            for (std::size_t idx = 0; idx < output0.rows; ++idx)
+            Matrix<float> mat = Matrix<float>(raw_ptr, num_channels, num_anchors, !m_useNewOutputShape);
+
+            for (std::size_t idx = 0; idx < iterations; ++idx)
             {
-                cv::Mat scores = output0.
-                    row(idx).colRange(
-                        m_useNewOutputShape ? YOLOV5NEW_OUTBOX_ELEMENT_COUNT:YOLOV5_OUTBOX_ELEMENT_COUNT, 
-                        num_channels);
+                int32_t width = 0;
+                int32_t height = 0;
+                int32_t left = 0;
+                int32_t top = 0;
+                float score = 0.f;
+                int class_idx = -1;
                 
-                const Yolov5RawResult* bbox = output0.row(idx).ptr<Yolov5RawResult>();
-                cv::Point classIdPoint;
-                double score;
-                cv::minMaxLoc(scores, 0, &score, 0, &classIdPoint);
+                if(m_useNewOutputShape) {
+                    mat.GetMaxValueWithIndexCol(idx, YOLOV5NEW_OUTBOX_ELEMENT_COUNT, score, class_idx);
+                    width = mat.Get(2, idx);
+                    height = mat.Get(3, idx);
+                    left = mat.Get(0, idx) - width * 0.5;
+                    top = mat.Get(1, idx) - height * 0.5;
+                }else {
+                    mat.GetMaxValueWithIndexRow(idx, YOLOV5_OUTBOX_ELEMENT_COUNT, score, class_idx);
+                    width = mat.Get(idx, 2);
+                    height = mat.Get(idx, 3);
+                    left = mat.Get(idx, 0) - width * 0.5;                    
+                    top = mat.Get(idx, 1) - height * 0.5;
+                    score *= mat.Get(idx, 4); // old version has box confidence element
+                }
                 
                 if (score > ic->conf_threshold)
                 {
-                    std::int32_t width = static_cast<std::int32_t>(bbox->w);
-                    std::int32_t height = static_cast<std::int32_t>(bbox->h);
-                    std::int32_t left = static_cast<std::int32_t>(bbox->cx) - width / 2;
-                    std::int32_t top = static_cast<std::int32_t>(bbox->cy) - height / 2;
-
                     result.emplace_back(left, top, width, height,
-                        static_cast<float>(m_useNewOutputShape ? score : score * bbox->box_conf),
-                        static_cast<std::size_t>(classIdPoint.x));
+                        static_cast<float>(score),
+                        static_cast<std::size_t>(class_idx));
                 }
                 
             }
 
             return result;
         }
-
+       
         bool YOLOv5::CheckIOShape()
         {
             using namespace Common;

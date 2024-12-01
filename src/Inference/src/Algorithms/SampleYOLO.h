@@ -1,12 +1,13 @@
 
 #pragma once
-#include "SampleAlgo.h"
+#include "Algorithms/SampleAlgo.h"
 
 
 namespace Inference
 {
     namespace Algorithms
     {
+
         class SampleYOLO: public SampleAlgo
         {
         public:
@@ -19,6 +20,7 @@ namespace Inference
 
 
         protected:
+            /// @brief the parse base on the yolov8
             virtual std::vector<Base::BoundingBox> ParseRawOutput(const std::vector<Base::TensorPtr>& outputs, std::shared_ptr<InferenceContext> ic) = 0;
         
         };
