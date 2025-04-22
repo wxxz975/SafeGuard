@@ -13,7 +13,7 @@
 #include <QDebug>
 
 M_HomePage::M_HomePage(QWidget *parent)
-    : ElaScrollPage{parent}
+    : M_SettingBase{parent}
 {
     // =============== UI ================
     // Ela界面配置
@@ -36,15 +36,11 @@ M_HomePage::M_HomePage(QWidget *parent)
     hb->setMargin(0);
     hb->addItem(new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
 
-    QWidget* centralWidget = new QWidget(this);
-    centralWidget->setWindowTitle("home");
-    addCentralWidget(centralWidget);
-    // 属相布局
-    QVBoxLayout* centerLayout = new QVBoxLayout(centralWidget);
-    centerLayout->setSpacing(10);
+    setTitle("home");
+    // 竖向布局
     centerLayout->setContentsMargins(2, 2, 2, 2);
-    centerLayout->addWidget(_mMainScreen);
-    centerLayout->addWidget(_mImgList);
+    centerLayout->insertWidget(0,_mMainScreen);
+    centerLayout->insertWidget(1,_mImgList);
     centerLayout->setStretch(0,75);
     centerLayout->setStretch(1,25);
     // =============== UI ================
@@ -59,3 +55,4 @@ M_HomePage::~M_HomePage()
 {
 
 }
+

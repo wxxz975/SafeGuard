@@ -11,35 +11,9 @@
 
 
 M_Settings::M_Settings(QWidget *parent)
-    : ElaScrollPage{parent}
+    : M_SettingBase{parent}
 {
     // =============== UI ================
-    // Ela界面配置
-    // save
-    ElaScrollPageArea* _Save = new ElaScrollPageArea(this);
-    QHBoxLayout* _SaveLayout = new QHBoxLayout(_Save);
-    ElaPushButton* Savebtn = new ElaPushButton(this);
-    Savebtn->setText("保存");
-    ElaPushButton* Cancelbtn = new ElaPushButton(this);
-    Cancelbtn->setText("取消");
-
-    connect(Savebtn,&ElaPushButton::clicked,this,[=](){
-        _Save->hide();
-    });
-    connect(Cancelbtn,&ElaPushButton::clicked,this,[=](){
-        _Save->hide();
-    });
-
-    ElaText* _Info = new ElaText("配置已修改,是否保存", this);
-    _Info->setTextPixelSize(18);
-    _SaveLayout->addSpacing(20);
-    _SaveLayout->addWidget(_Info);
-    _SaveLayout->addStretch();
-    _SaveLayout->addWidget(Savebtn);
-    _SaveLayout->addWidget(Cancelbtn);
-    _SaveLayout->addSpacing(20);
-
-
     ElaText* themeText = new ElaText("边框设置", this);
     themeText->setWordWrap(false);
     themeText->setTextPixelSize(18);
@@ -47,13 +21,10 @@ M_Settings::M_Settings(QWidget *parent)
     // 线条效果展示
 
     ElaScrollPageArea* _LineShowArea = new ElaScrollPageArea(this);
-    _LineShowArea->setFixedHeight(350);
     QHBoxLayout *_LineShowLayout = new QHBoxLayout();
-    _LineShowArea->setLayout(_LineShowLayout);
     QWidget *LineBoard = new QWidget(this);
-
-//    LineBoard->setStyleSheet("background:red");
-//    LineBoard->setMinimumHeight(300);
+    _LineShowArea->setFixedHeight(350);
+    _LineShowArea->setLayout(_LineShowLayout);
     _LineShowLayout->addWidget(LineBoard);
 
     // 颜色选择项
@@ -164,32 +135,29 @@ M_Settings::M_Settings(QWidget *parent)
     _TextLayoutSH->addSpacing(20);
 
     // 添加页面布局
-    QWidget* centralWidget = new QWidget(this);
-    centralWidget->setWindowTitle("设置");
-    QVBoxLayout* centerLayout = new QVBoxLayout(centralWidget);
     //board
-    centerLayout->addSpacing(10);
-    centerLayout->addWidget(_LineShowArea);
+    centerLayout->insertSpacing(0,10);
+    centerLayout->insertWidget(1,_LineShowArea);
     //color selector
-    centerLayout->addSpacing(10);
-    centerLayout->addWidget(themeText);
-    centerLayout->addSpacing(10);
-    centerLayout->addWidget(_ColorArea);
+    centerLayout->insertSpacing(2,10);
+    centerLayout->insertWidget(3,themeText);
+    centerLayout->insertSpacing(4,10);
+    centerLayout->insertWidget(5,_ColorArea);
     //Text config
     //position
-    centerLayout->addSpacing(10);
-    centerLayout->addWidget(_TextArea);
-    centerLayout->addSpacing(10);
-    centerLayout->addWidget(_Save);
-    centerLayout->addStretch();
-    addCentralWidget(centralWidget, true, true, 0);
-    //font size
+    centerLayout->insertSpacing(6,10);
+    centerLayout->insertWidget(7,_TextArea);
+    centerLayout->insertSpacing(8,10);
+//    centerLayout->addSpacing(10);
+//    centerLayout->addWidget(_TextArea);
+//    centerLayout->addSpacing(10);
+
+    setTitle("设置");
+    _Save->hide();
+    // =============== UI ================
 
     // 事件监听
     LineBoard->installEventFilter(this);
-
-    _Save->hide();
-    // =============== UI ================
 }
 
 bool M_Settings::eventFilter(QObject *watched, QEvent *event)

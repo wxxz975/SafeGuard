@@ -5,10 +5,10 @@
 #include <QEvent>
 #include <QStringList>
 
-#include "ElaScrollPage.h"
+#include "m_settingbase.h"
 
 
-class M_SelectionSettings : public ElaScrollPage
+class M_SelectionSettings : public M_SettingBase
 {
     Q_OBJECT
 public:

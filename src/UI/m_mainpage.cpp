@@ -11,7 +11,7 @@
 #include <QDebug>
 
 M_MainPage::M_MainPage(QWidget *parent)
-    : ElaWindow{parent}
+    : M_SettingsIF{parent}
 {
     // =============== UI ================
     // Ela界面配置
@@ -34,9 +34,30 @@ M_MainPage::M_MainPage(QWidget *parent)
     _mCount = new M_Count();
     addPageNode("识别统计",_mCount,ElaIconType::Calculator);
     // =============== UI ================
+
+    //
+    PageConfig();
 }
 
 M_MainPage::~M_MainPage()
 {
 
+}
+
+void M_MainPage::bindModelCfgNum(std::string title, int id, int min, int max)
+{
+    if(_mModelSettings==nullptr)return;
+    _mModelSettings->addCfgNum(title,id,min,max);
+}
+
+void M_MainPage::bindModelCfgList(std::string title, int id, std::vector<std::string> list)
+{
+    if(_mModelSettings==nullptr)return;
+    _mModelSettings->addCfgListm(title,id,list);
+}
+
+void M_MainPage::bindModelCfgButton(std::string title, int id)
+{
+    if(_mModelSettings==nullptr)return;
+    _mModelSettings->addCfgButton(title,id);
 }

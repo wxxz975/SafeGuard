@@ -26,7 +26,12 @@ void M_VideoIF::readCompleted(cv::Mat *used)
     delete used;
 }
 
-void M_VideoIF::windowChange(int width, int height)
+//void M_VideoIF::windowChange(int width, int height)
+//{
+
+//}
+
+void M_VideoIF::configChange(int id, int value)
 {
 
 }

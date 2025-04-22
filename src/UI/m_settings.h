@@ -9,14 +9,14 @@
 #include <QStringList>
 #include <QPainter>
 
-#include "ElaScrollPage.h"
+#include "m_settingbase.h"
 
 class ElaScrollPageArea;
 class ElaColorDialog;
 class ElaComboBox;
 class ElaSpinBox;
 
-class M_Settings : public ElaScrollPage
+class M_Settings : public M_SettingBase
 {
     Q_OBJECT
 public:

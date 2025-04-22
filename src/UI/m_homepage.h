@@ -3,11 +3,11 @@
 
 #include <QWidget>
 
-#include "ElaScrollPage.h"
+#include "m_settingbase.h"
 
 class M_VideoCore;
 
-class M_HomePage : public ElaScrollPage
+class M_HomePage : public M_SettingBase
 {
     Q_OBJECT
 public:
@@ -23,6 +23,7 @@ private:
     QHBoxLayout *hb{nullptr};
 
     M_VideoCore *_mVideoc{nullptr};
+
 };
 
 #endif // M_HOMEPAGE_H

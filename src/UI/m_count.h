@@ -3,11 +3,11 @@
 
 #include <QWidget>
 
-#include "ElaScrollPage.h"
+#include "m_settingbase.h"
 
 class ElaTableView;
 
-class M_Count : public ElaScrollPage
+class M_Count : public M_SettingBase
 {
     Q_OBJECT
 public:

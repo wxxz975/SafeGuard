@@ -11,7 +11,6 @@ else()
     )
 endif()
 
-
 target_link_libraries(Xray PRIVATE "${ElaLib}")
 target_link_libraries(Xray PRIVATE "${OnnLib}")
 target_link_libraries(Xray PRIVATE "${LIBRARIES_LIST}")

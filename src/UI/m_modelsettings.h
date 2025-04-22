@@ -2,28 +2,17 @@
 #define M_MODELSETTINGS_H
 
 #include <QWidget>
-#include <QVBoxLayout>
-#include <QStringList>
+#include "m_settingbase.h"
 
-#include "ElaScrollPage.h"
-
-class ElaComboBox;
-class ElaSpinBox;
-class ElaToggleSwitch;
-
-class M_ModelSettings : public ElaScrollPage
+class M_ModelSettings : public M_SettingBase
 {
     Q_OBJECT
 public:
     explicit M_ModelSettings(QWidget *parent = nullptr);
 
-signals:
-private:
-    ElaComboBox* _Comb_1{nullptr};
-    ElaSpinBox* _SpinBox_1{nullptr};
-    ElaToggleSwitch* _Toggle_1{nullptr};
-
-    QStringList _List_1{"框架1","框架2","框架3"};
+    void addCfgNum(std::string &, int id, int min, int max);
+    void addCfgListm(std::string &title, int id, std::vector<std::string> &list);
+    void addCfgButton(std::string,int id);
 };
 
 #endif // M_MODELSETTINGS_H

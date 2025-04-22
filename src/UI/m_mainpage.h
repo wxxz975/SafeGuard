@@ -1,9 +1,7 @@
 #ifndef M_MAINPAGE_H
 #define M_MAINPAGE_H
 
-#include <QWidget>
-//
-#include "ElaWindow.h"
+#include "m_settingsif.h"
 
 class M_Settings;
 class M_HomePage;
@@ -11,7 +9,7 @@ class M_ModelSettings;
 class M_SelectionSettings;
 class M_Count;
 
-class M_MainPage : public ElaWindow
+class M_MainPage : public M_SettingsIF
 {
     Q_OBJECT
 public:
@@ -29,6 +27,12 @@ private:
     M_SelectionSettings* _mSelect{nullptr};
     // 统计界面界面
     M_Count* _mCount{nullptr};
+
+
+    // 函数实现
+    void bindModelCfgNum(std::string title,int id,int min,int max);
+    void bindModelCfgList(std::string title,int id,std::vector<std::string> list);
+    void bindModelCfgButton(std::string title,int id);
 };
 
 #endif // M_MAINPAGE_H

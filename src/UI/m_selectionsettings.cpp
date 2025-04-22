@@ -14,13 +14,13 @@
 #include <QDebug>
 
 M_SelectionSettings::M_SelectionSettings(QWidget *parent)
-    : ElaScrollPage{parent}
+    : M_SettingBase{parent}
 {
 
     // =============== UI ================
     // Ela界面配置
-    ElaScrollPageArea* _Text = new ElaScrollPageArea(this);
-    _Text->setFixedHeight(400);
+//    ElaScrollPageArea* _Text = new ElaScrollPageArea(this);
+//    _Text->setFixedHeight(400);
     // 按钮自适应布局
     // 未完成
 
@@ -58,11 +58,8 @@ M_SelectionSettings::M_SelectionSettings(QWidget *parent)
     //    }
 //    qDebug()<<bt->size();
 
-    QWidget* centralWidget = new QWidget(this);
-    centralWidget->setWindowTitle("识别配置");
-    QVBoxLayout* centerLayout = new QVBoxLayout(centralWidget);
-    centerLayout->addWidget(_Text);
-    centerLayout->addStretch();
+    setTitle("识别配置");
+//    centerLayout->insertWidget(0,_Text);
     addCentralWidget(centralWidget);
     // =============== UI ================
 }

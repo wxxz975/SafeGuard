@@ -11,7 +11,7 @@
 #include "ElaTableView.h"
 
 M_Count::M_Count(QWidget *parent)
-    : ElaScrollPage{parent}
+    : M_SettingBase{parent}
 {
     // =============== UI ================
     // Ela界面配置
@@ -30,12 +30,8 @@ M_Count::M_Count(QWidget *parent)
     }
     tables->setModel(model);
 
+    setTitle("统计页面");
 
-    QWidget* centralWidget = new QWidget(this);
-    centralWidget->setWindowTitle("统计页面");
-    QVBoxLayout* centerLayout = new QVBoxLayout(centralWidget);
-    centerLayout->addWidget(tables);
-    centerLayout->addStretch();
-    addCentralWidget(centralWidget);
+    centerLayout->insertWidget(0,tables);
     // =============== UI ================
 }

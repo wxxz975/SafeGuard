@@ -24,7 +24,7 @@ protected:
     // 函数功能: 画面大小已变化
     // 函数触发时 传入当前画面大小
     // 此函数无需手动触发
-    void windowChange(int width,int height);
+//    void windowChange(int width,int height);
 
     // 开始
     virtual bool start() = 0;
@@ -38,6 +38,14 @@ protected:
     // 参数值 矩阵地址(一帧画面)
     // 返回值 执行结果 true为正常 false为无效
     virtual bool setMat(cv::Mat*) = 0;
+
+    // 函数功能: 配置发生更改
+    // 函数触发时 传入绑定id和数值
+    // 参数1  触发的id      int            配置更改的id
+    // 参数2  改变的值      int
+    // 详细函数说明需查看 M_SettingsIF 头文件
+    // 此函数无需手动触发
+    void configChange(int id,int value);
 
 protected slots:
     // 函数功能: 矩阵已使用
