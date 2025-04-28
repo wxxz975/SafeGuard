@@ -2,10 +2,18 @@
 #define M_HOMEPAGE_H
 
 #include <QWidget>
+#include <QImage>
+#include <QVector>
 
+#include "M_Def.h"
 #include "m_settingbase.h"
 
-class M_VideoCore;
+class M_Screen;
+class ElaWidget;
+class QScrollArea;
+class M_SceenShotWidget;
+
+#define SceenShotNum 6
 
 class M_HomePage : public M_SettingBase
 {
@@ -13,17 +21,24 @@ class M_HomePage : public M_SettingBase
 public:
     explicit M_HomePage(QWidget *parent = nullptr);
     ~ M_HomePage();
+
 signals:
+    void ScreenSizeChange(int width,int height);
+    void SendImg(MatType::MT,QImage);
 private:
+
+    void addScreenShot(QImage);
     // 主屏幕
-    QWidget* _mMainScreen{nullptr};
+    M_Screen* _mMainScreen{nullptr};
     // 截图列表
-    QWidget* _mImgList{nullptr};
-    // 截图横向布局
+    ElaScrollArea* _mImgList{nullptr};
+    QWidget* _mImgLWidget{nullptr};
+    M_SceenShotWidget *_front{nullptr};
     QHBoxLayout *hb{nullptr};
-
-    M_VideoCore *_mVideoc{nullptr};
-
+    // 图片和控件列表
+    QVector<QImage> _imglist;
+    QVector<M_SceenShotWidget*> _mSSWlist;
+    int _count;
 };
 
 #endif // M_HOMEPAGE_H

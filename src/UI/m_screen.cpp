@@ -1,43 +1,47 @@
 #include "m_screen.h"
+
+#include "opencv2/opencv.hpp"
 #include <QDebug>
+#include <QPaintEvent>
 
 M_Screen::M_Screen(QWidget *parent)
     : QWidget{parent}
 {
     installEventFilter(this);
+    painterflage = true;
 }
 
-void M_Screen::readImage(QImage img)
+void M_Screen::readimg(QImage img)
 {
-    // 接受图像并缩放至控件大小
-    if(img.isNull())return;
-    _buffer = img.copy().scaled(size(),Qt::KeepAspectRatio);
-    this->update();
+    // 预防多次触发造成事件队列溢出
+    _painter_buffer = img;
+    if(painterflage){
+        painterflage = false;
+        this->update();
+    }
 }
 
 bool M_Screen::eventFilter(QObject *watched, QEvent *event)
 {
+    //绘制事件
     if(event->type()==QEvent::Paint){
-        //绘制事件
         QPainter pa(this);
-        // 抗锯齿
         pa.setRenderHint(QPainter::Antialiasing, true);
-        // 黑底
         QRect rect = this->rect();
         rect.setWidth(rect.width()-1);
         rect.setHeight(rect.height()-1);
         pa.setBrush(Qt::black);
         pa.drawRoundedRect(rect,8,8);
         // 绘制帧
-        if(!_buffer.isNull()){
+        if(!_painter_buffer.isNull()){
             double x,y;
-            x = (width()-_buffer.width())/2.0;
-            y = (height()-_buffer.height())/2.0;
-            pa.drawImage(x,y,_buffer);
+            x = (width()-_painter_buffer.width())/2.0;
+            y = (height()-_painter_buffer.height())/2.0;
+            pa.drawImage(x,y,_painter_buffer);
+            painterflage = true;
         }
     }else if(event->type()==QEvent::Resize){
-        //界面缩放事件
+        emit ScreenChange(width(),height());
     }
     return QWidget::eventFilter(watched,event);
 }
-

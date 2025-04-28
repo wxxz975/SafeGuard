@@ -6,7 +6,10 @@
 #include "ElaSpinBox.h"
 #include "ElaText.h"
 #include "ElaPushButton.h"
+#include "ElaToggleSwitch.h"
+#include "ElaToggleButton.h"
 
+#include <QSpacerItem>
 #include <QDebug>
 
 
@@ -28,9 +31,9 @@ M_Settings::M_Settings(QWidget *parent)
     _LineShowLayout->addWidget(LineBoard);
 
     // 颜色选择项
-    _ColorArea = new ElaScrollPageArea(this);
+    ElaScrollPageArea* _ColorArea = new ElaScrollPageArea(this);
     _ColorArea->setFixedHeight(140);
-    _ColorLayout = new QHBoxLayout();
+    QHBoxLayout* _ColorLayout = new QHBoxLayout();
 
     _ColorDialog = new ElaColorDialog(this);
     _ColorDialog->setCurrentColor(QColor(240,0,0));
@@ -136,23 +139,46 @@ M_Settings::M_Settings(QWidget *parent)
 
     // 添加页面布局
     //board
-    centerLayout->insertSpacing(0,10);
-    centerLayout->insertWidget(1,_LineShowArea);
+    centerLayout->addSpacing(10);
+    centerLayout->addWidget(themeText);
+    centerLayout->addSpacing(10);
+    centerLayout->addWidget(_LineShowArea);
     //color selector
-    centerLayout->insertSpacing(2,10);
-    centerLayout->insertWidget(3,themeText);
-    centerLayout->insertSpacing(4,10);
-    centerLayout->insertWidget(5,_ColorArea);
+    centerLayout->addSpacing(10);
+    centerLayout->addWidget(_ColorArea);
     //Text config
     //position
-    centerLayout->insertSpacing(6,10);
-    centerLayout->insertWidget(7,_TextArea);
-    centerLayout->insertSpacing(8,10);
-//    centerLayout->addSpacing(10);
-//    centerLayout->addWidget(_TextArea);
-//    centerLayout->addSpacing(10);
+    centerLayout->addSpacing(10);
+    centerLayout->addWidget(_TextArea);
+    centerLayout->addSpacing(10);
+    //
+
+    // 识别配置
+    themeText = new ElaText("识别配置", this);
+    themeText->setWordWrap(false);
+    themeText->setTextPixelSize(18);
+
+    _IdentifyArea = new ElaScrollPageArea(this);
+    _IdentifyArea->installEventFilter(this);
+    LoadButton();
+
+    centerLayout->addSpacing(10);
+    centerLayout->addWidget(themeText);
+    centerLayout->addSpacing(20);
+    centerLayout->addWidget(_IdentifyArea);
+
+    // 模型设置
+    themeText = new ElaText("模型设置", this);
+    themeText->setWordWrap(false);
+    themeText->setTextPixelSize(18);
+
+
+    centerLayout->addSpacing(10);
+    centerLayout->addWidget(themeText);
+    centerLayout->addSpacing(20);
 
     setTitle("设置");
+    centerLayout->addWidget(_Save);
     _Save->hide();
     // =============== UI ================
 
@@ -160,26 +186,169 @@ M_Settings::M_Settings(QWidget *parent)
     LineBoard->installEventFilter(this);
 }
 
+void M_Settings::addCfgNum(std::string &title, int id, int min, int max)
+{
+    if(centerLayout==nullptr)return;
+    ElaScrollPageArea* ESPA = new ElaScrollPageArea(this);
+    QHBoxLayout* HBLay = new QHBoxLayout(ESPA);
+    ElaSpinBox* ElaSpin = new ElaSpinBox(this);
+    ElaSpin->setMinimum(min);
+    ElaSpin->setMaximum(max);
+    connect(ElaSpin,&ElaSpinBox::textChanged,this,[=](){
+        _Save->show();
+    });
+
+    ElaText* ElaT= new ElaText(QString(title.c_str()), this);
+    ElaT->setTextPixelSize(15);
+    HBLay->addSpacing(20);
+    HBLay->addWidget(ElaT);
+    HBLay->addStretch();
+    HBLay->addWidget(ElaSpin);
+    HBLay->addSpacing(20);
+
+    centerLayout->insertWidget(centerLayout->count()-1,ESPA);
+}
+
+void M_Settings::addCfgListm(std::string &title, int id, std::vector<std::string> &list)
+{
+    ElaScrollPageArea* ESPA = new ElaScrollPageArea(this);
+    QHBoxLayout* HBLay = new QHBoxLayout(ESPA);
+    ElaComboBox* ElaComb = new ElaComboBox(this);
+
+    for(std::vector<std::string>::iterator it = list.begin();it!=list.end();it++){
+        ElaComb->addItem(QString(it->c_str()));
+    }
+
+    connect(ElaComb,&ElaComboBox::currentTextChanged,this,[=](){
+        ElaComb->show();
+    });
+
+    ElaText* ElaT = new ElaText(QString(title.c_str()), this);
+    ElaT->setTextPixelSize(15);
+    HBLay->addSpacing(20);
+    HBLay->addWidget(ElaT);
+    HBLay->addStretch();
+    HBLay->addWidget(ElaComb);
+    HBLay->addSpacing(20);
+    centerLayout->insertWidget(centerLayout->count()-1,ESPA);
+}
+
+void M_Settings::addCfgButton(std::string &title, int id)
+{
+    ElaScrollPageArea* ESPA = new ElaScrollPageArea(this);
+    QHBoxLayout* HBLay = new QHBoxLayout(ESPA);
+    ElaToggleSwitch* ElaTog = new ElaToggleSwitch(this);
+
+    ElaText* ElaT = new ElaText(QString(title.c_str()),this);
+    ElaT->setTextPixelSize(15);
+    HBLay->addSpacing(20);
+    HBLay->addWidget(ElaT);
+    HBLay->addStretch();
+    HBLay->addWidget(ElaTog);
+    HBLay->addSpacing(20);
+    connect(ElaTog,&ElaToggleSwitch::toggled,this,[=](){
+        _Save->show();
+    });
+    centerLayout->insertWidget(centerLayout->count()-1,ESPA);
+}
+
 bool M_Settings::eventFilter(QObject *watched, QEvent *event)
 {
-    if(event->type() == QEvent::Paint){
-        QWidget *w = static_cast<QWidget*>(watched);
-        if(w){
-            QPainter pa(w);
-            QFont font;
-            QPen pen;
+    if(watched == _IdentifyArea){
+        if(event->type()==QEvent::Resize){
+            updateIdentifyButton();
+        }
+    }
+    else{
+        if(event->type() == QEvent::Paint){
+            QWidget *w = static_cast<QWidget*>(watched);
+            if(w){
+                QPainter pa(w);
+                QFont font;
+                QPen pen;
 
-            font.setPointSize(_TextFontSize_SpinBox->value());
-            pen.setColor(_ColorDialog->getCurrentColor());
-            pen.setWidth(_LineWidth_SpinBox->value());
-            pa.setPen(pen);
-            pa.setFont(font);
-            pa.drawRect(60,50,w->width()-120,w->height()-100);
-            pa.drawText(62+pen.width(),
-                        _TextPosition_ComBox->currentIndex()?50-pen.width():50+pa.fontMetrics().ascent()+pa.fontMetrics().descent(),
-                        _BoradText);
-//            pa.drawText(pa.fontMetrics().width(_BoradText));
+                font.setPointSize(_TextFontSize_SpinBox->value());
+                pen.setColor(_ColorDialog->getCurrentColor());
+                pen.setWidth(_LineWidth_SpinBox->value());
+                pa.setPen(pen);
+                pa.setFont(font);
+                pa.drawRect(60,50,w->width()-120,w->height()-100);
+                pa.drawText(62+pen.width(),
+                            _TextPosition_ComBox->currentIndex()?50-pen.width():50+pa.fontMetrics().ascent()+pa.fontMetrics().descent(),
+                            _BoradText);
+            }
         }
     }
     return QWidget::eventFilter(watched,event);
 }
+
+QStringList M_Settings::LoadText()
+{
+    IDF_KV.insert("剪刀1",1);
+    IDF_KV.insert("菜刀菜刀",2);
+    IDF_KV.insert("炸菜刀菜刀弹",3);
+    IDF_KV.insert("锤头炸菜刀菜刀弹炸菜刀",4);
+    IDF_KV.insert("剪刀",12);
+    IDF_KV.insert("剪刀1",51);
+    IDF_KV.insert("菜刀炸菜刀菜刀弹炸菜刀菜刀弹炸菜刀菜刀弹",11);
+    IDF_KV.insert("炸菜刀菜刀弹",45);
+    IDF_KV.insert("锤头炸菜刀菜刀弹炸菜刀",63);
+    IDF_KV.insert("剪刀",34);
+    IDF_KV.insert("炸弹炸弹",6);
+    IDF_KV.insert("菜刀菜刀",35);
+    IDF_KV.insert("炸菜刀菜刀弹",24);
+    IDF_KV.insert("锤头炸菜刀菜刀弹炸菜刀",35);
+    IDF_KV.insert("剪刀",456);
+    return {"剪刀1","菜刀菜刀","炸菜刀菜刀弹","锤头炸菜刀菜刀弹炸菜刀","剪刀","菜刀炸菜刀菜刀弹炸菜刀菜刀弹炸菜刀菜刀弹","炸弹","炸弹炸弹","剪刀1","菜刀菜刀","炸菜刀菜刀弹","锤头菜","剪刀","菜刀","炸弹","炸弹炸弹"};
+}
+
+void M_Settings::LoadButton()
+{
+    QStringList list = LoadText();
+    ElaToggleButton* bt;
+    if(!Btns.isEmpty())for(ElaToggleButton*i:Btns){delete i;}
+    Btns.clear();
+    QFont font;
+    for(QString&i:list){
+        bt = new ElaToggleButton(i);
+        Btns.push_back(bt);
+        bt->setMinimumWidth(bt->font().pixelSize()*i.count()+20);
+        bt->setMaximumWidth(bt->font().pixelSize()*i.count()+20);
+        bt->setMinimumHeight(bt->font().pixelSize()+20);
+        bt->setMaximumHeight(bt->font().pixelSize()+20);
+    }
+}
+
+void M_Settings::updateIdentifyButton()
+{
+    if(_IdentifyArea==nullptr||Btns.isEmpty())return;
+    const int margin = 10;
+    int width = centralWidget->width()-2*centerLayout->margin();
+    int _w = margin,_tmp = 0,_h = margin;
+    QFont font = Btns.at(0)->font();
+    for(ElaToggleButton*&i:Btns)
+    {
+        i->setParent(_IdentifyArea);
+        if(_w+i->width()+margin/2>width){
+            _w=margin;
+            _h+=i->height()+margin/2;
+        }
+        i->move(_w,_h);
+        _w+=i->width()+margin/2;
+    }
+    if(Btns.count()>0){
+        _h+=Btns[0]->height();
+    }
+    _IdentifyArea->setMaximumHeight(_h+margin);
+    _IdentifyArea->setMinimumHeight(_h+margin);
+}
+
+
+
+
+
+
+
+
+
+

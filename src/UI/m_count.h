@@ -12,7 +12,6 @@ class M_Count : public M_SettingBase
     Q_OBJECT
 public:
     explicit M_Count(QWidget *parent = nullptr);
-
 signals:
 private:
     ElaTableView* tables{nullptr};

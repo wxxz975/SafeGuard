@@ -6,19 +6,26 @@
 #include <QPainter>
 #include <QImage>
 
+
+//namespace cv {
+//    class Mat;
+//}
+
 class M_Screen : public QWidget
 {
     Q_OBJECT
 public:
     explicit M_Screen(QWidget *parent = nullptr);
+
 signals:
-    void sizechange(int w,int h);
+    void ScreenChange(int width,int height);
 public slots:
-    void readImage(QImage);
+    void readimg(QImage);
 private:
     bool eventFilter(QObject *watched, QEvent *event);
 
-    QImage _buffer;
+    bool painterflage;
+    QImage _painter_buffer;
 };
 
 #endif // M_SCREEN_H

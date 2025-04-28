@@ -35,9 +35,7 @@ M_SettingBase::M_SettingBase(QWidget *parent)
 
     centralWidget = new QWidget(this);
     centerLayout = new QVBoxLayout(centralWidget);
-    centerLayout->addWidget(_Save);
     centerLayout->addStretch();
-
 }
 
 void M_SettingBase::setTitle(QString title)

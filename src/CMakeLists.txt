@@ -1,4 +1,7 @@
-file(GLOB PROJECT_SOURCES UI/*)
+file(GLOB HFILe UI/*.h)
+file(GLOB CPPFILE UI/*.cpp)
+SET(PROJECT_SOURCES ${HFILe} ${CPPFILE})
+file(GLOB PROJECT_SOURCES_INTERFACE UI/interface/*)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Xray
@@ -7,7 +10,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     )
 else()
     add_executable(Xray
-        ${PROJECT_SOURCES}
+        ${PROJECT_SOURCES} ${PROJECT_SOURCES_INTERFACE}
     )
 endif()
 

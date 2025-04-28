@@ -2,6 +2,7 @@
 #define M_SETTINGBASE_H
 
 #include <QWidget>
+#include <QEvent>
 #include "ElaScrollPage.h"
 
 class QVBoxLayout;
@@ -12,7 +13,9 @@ class M_SettingBase : public ElaScrollPage
     Q_OBJECT
 public:
     explicit M_SettingBase(QWidget *parent = nullptr);
+
     void setTitle(QString title);
+
 signals:
 protected:
 
